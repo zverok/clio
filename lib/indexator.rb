@@ -1,6 +1,8 @@
 require 'json'
 require 'core_ext'
 
+require 'rutils/datetime/datetime'
+
 def parse_time(str)
     str =~ /(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)Z/
     Time.local($1, $2, $3, $4, $5, $6)

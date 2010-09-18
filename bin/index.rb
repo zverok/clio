@@ -12,6 +12,7 @@ entries_path = File.join(base_path, 'result', user, 'data', 'entries')
 FileUtils.makedirs indexes_path
 
 $:.unshift File.join(base_path, 'lib')
+$:.unshift File.join(base_path, 'vendors')
 require 'indexator'
 
 INDEXES = [DateIndex, HashtagIndex]

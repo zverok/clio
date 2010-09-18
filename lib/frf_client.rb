@@ -2,6 +2,8 @@ require 'typhoeus'
 require 'json'
 require 'base64'
 
+require 'rutils/datetime/datetime'
+
 class String
     def to_json
         '"' + self.gsub('\\', '\\\\\\').gsub('"', '\"') + '"'
@@ -53,6 +55,8 @@ class FriendFeedClient
                 e['name'] = ename
                 e['dateFriendly'] = parse_time(e['date']).strftime('%d %B %Y в %H:%M')
                 (e['comments'] || []).each{|c| c['dateFriendly'] = parse_time(c['date']).strftime('%d %B %Y в %H:%M')}
+                (e['likes'] || []).each{|c| c['dateFriendly'] = parse_time(c['date']).strftime('%d %B %Y в %H:%M')}
+                e['likes'] && e['likes'] = e['likes'].sort_by{|l| l['date']}.reverse
                 FileUtils.makedirs(File.dirname(name))
                 File.write(name, e.to_json)
             end
