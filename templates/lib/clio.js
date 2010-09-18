@@ -21,7 +21,6 @@ Clio = {
         var term = Url.decode(trm.replace('%C2%A0', '%20'))
         $.getJSON(Clio.indexesURL() + index + '.js', function(idx){
             var row;
-            console.log(trm)
             
             if(idx.meta.kind == 'grouped')
                 $.each(idx.groups, function(){
@@ -33,7 +32,7 @@ Clio = {
                 $.each(idx.rows, function(){
                     if(this['descriptor'] == trm) row = this;
                 });
-                
+
             var entries = [];
             $.each(row.entries, function(){
                 $.getJSON(Clio.entriesURL() + this + '.js', function(entry){
@@ -43,9 +42,12 @@ Clio = {
                     }
                 })
             });
+            
+            // если в имени индекса есть "|", то он и является вторичным индексом, который надо сейчас отобразить
+            var subindex = index.indexOf('|') > -1 ? index : row.subindex 
+            Clio.fillSidebar(index, trm, subindex);
         });
         
-        Clio.fillSidebar(index, trm);
     },
     
     showEntry: function(eid){
@@ -58,7 +60,7 @@ Clio = {
         Clio.fillSidebar();
     },
     
-    fillSidebar: function(indexdescr, term){
+    fillSidebar: function(indexdescr, term, subindex){
         var indexids = ['dates', 'hashtags']
         var plain_indexes = [], grouped_indexes = [];
         
@@ -79,6 +81,19 @@ Clio = {
                 }
             });
         });
+        
+        if(subindex){
+            $.getJSON(Clio.indexesURL() + subindex + '.js', function(index){
+                $('#sidebar #subindex').show()
+                $('#sidebar #subindex').render({index: index}, ClioTemplates.sidebarSubindex);
+
+                //на случай, если выбранный термин относится ко вторичному индексу
+                var el = $('#sidebar a[href*=./list.html#' + indexdescr + ':' + term + ']')
+                el.attr('style', 'color:red');
+            });
+        }else{
+            $('#sidebar #subindex').hide()
+        }
     },
     
     setupEvents: function(){

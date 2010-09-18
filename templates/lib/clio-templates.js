@@ -70,5 +70,16 @@ ClioTemplates = {
                 'a@href': './list.html##{index.meta.descriptor}:#{row.descriptor}'
             }}
         }}
+    },
+
+    sidebarSubindex: {
+            '.title a': 'index.meta.title',
+            '.title a@href': './index.html##{index.meta.descriptor}',
+            
+            '.box-body ul li': {'row<-index.rows': {
+                'a': 'row.title',
+                'a@href': './list.html##{index.meta.descriptor}:#{row.descriptor}'
+            }}
     }
+    
 }

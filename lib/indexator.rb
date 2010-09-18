@@ -13,16 +13,23 @@ end
 class Index
     def initialize
         @rows = Hash.new{|h, k| h[k] = {'descriptor' => k, 'entries' => []} }
+        @subindexes = Hash.new{|h,k| h[k] = subindex.new(k)}
     end
     
     def put(entry)
-        parse(entry).each{|descriptor, title|
+        parse(entry).each do |descriptor, title|
             @rows[descriptor]['title'] ||= title
             @rows[descriptor]['entries'] << [entry['date'], entry['name']]
-        }
+            
+            if has_subindexes?
+                @subindexes[descriptor].put(entry) 
+                @rows[descriptor]['subindex'] ||= @subindexes[descriptor].descriptor
+            end
+        end
     end
     
     def result
+        #pp @rows.values
         rows = @rows.values.
                 sort_by{|r| r['descriptor']}.
                 map{|r| r.merge(
@@ -54,6 +61,7 @@ class Index
     end
     
     def save(base_path)
+        @subindexes.values.each{|si| si.save(base_path)}
         File.write(File.join(base_path, descriptor + '.js'), result.to_json)
     end
     
@@ -70,6 +78,8 @@ class Index
     def row_title(key); row_descriptor(key) end
     
     def grouped?; false end
+    def has_subindexes?; not subindex.nil? end
+    def subindex; nil end
 end
 
 class DateIndex < Index
@@ -82,7 +92,8 @@ class DateIndex < Index
     
     def grouped?; true end
     def group_by(descriptor); descriptor.split('-', 2).first end
-    #subindex 'days'
+    
+    def subindex; MonthDaysIndex end
 end
 
 
@@ -96,12 +107,19 @@ class HashtagIndex < Index
     end
 end
 
-#define_index 'days' do |under|
-    #title under
-    #extract{|entry| parse_time(entry['date'])}
-    #descriptor{|v| v.strftime('%Y-%m-%d')}
-    #friendly{|v| v.strftime('%d %B')}
-#end
+class MonthDaysIndex < Index
+    def initialize(month_descriptor)
+        super()
+        @month = Time.local(*(month_descriptor + '-01').split('-'))
+    end
+    
+    def descriptor; "days|#{@month.strftime('%Y-%m')}" end
+    def title; @month.strftime('%B %Y') end
+    
+    def key(entry); parse_time(entry['date']) end
+    def row_descriptor(tm); tm.strftime('%d') end
+    #def row_title(tm); tm.strftime('%d %B %Y') end
+end
 
 #define_list 'all' do
     #title 'Все'
