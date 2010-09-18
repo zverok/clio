@@ -1,5 +1,6 @@
 Clio = {
-    dataURL: function(){return document.URL.replace(/[^\/]+$/, '') + 'data/'},
+    dataURL: function(){return window.location.pathname.replace(/[^\/]+$/, '') + 'data/'},
+        //return document.URL.replace(/[^\/]+$/, '') + 'data/'},
 
     indexesURL: function(){return Clio.dataURL() + 'indexes/';},
     entriesURL: function(){return Clio.dataURL() + 'entries/';},
@@ -17,11 +18,10 @@ Clio = {
         });
     },
     
-    showList: function(index, trm){
+    showList: function(index, trm, page){
         var term = Url.decode(trm.replace('%C2%A0', '%20'))
         $.getJSON(Clio.indexesURL() + index + '.js', function(idx){
             var row;
-            
             if(idx.meta.kind == 'grouped')
                 $.each(idx.groups, function(){
                     $.each(this.rows, function(){
@@ -33,22 +33,29 @@ Clio = {
                     if(this['descriptor'] == trm) row = this;
                 });
 
-            console.log(idx)
-            $('.home .title a').text(idx.meta.title + ': ' + row.title)
+            var shortTitle = idx.meta.title + ': ' + row.title
+            $('title').text(shortTitle)
+            $('.home .title a').text(shortTitle)
 
+            var pagesize = ClioSettings.pageSize;
+            var p = page ? parseInt(page)-1 : 0
+            var s = p*pagesize, e = (p+1)*pagesize;
+            var entryIds = row.entries.slice(s, e)
             var entries = [];
-            $.each(row.entries, function(){
+            $.each(entryIds, function(){
                 $.getJSON(Clio.entriesURL() + this + '.js', function(entry){
                     entries.push(entry);
-                    if(entries.length == row.entries.length){
+                    if(entries.length == entryIds.length){
                         $('#feed').render({entries: entries}, ClioTemplates.feed);
                     }
                 })
             });
             
+            Clio.showPager(row.entries.length, pagesize, p);
+            
             // если в имени индекса есть "|", то он и является вторичным индексом, который надо сейчас отобразить
             var subindex = index.indexOf('|') > -1 ? index : row.subindex 
-            Clio.fillSidebar(index, trm, subindex);
+            Clio.showSidebar(index, trm, subindex);
         });
         
     },
@@ -60,10 +67,10 @@ Clio = {
             $('div.body').render(entry, ClioTemplates.entry);
         });
         
-        Clio.fillSidebar();
+        Clio.showSidebar();
     },
     
-    fillSidebar: function(indexdescr, term, subindex){
+    showSidebar: function(indexdescr, term, subindex){
         var indexids = ['dates', 'hashtags']
         var plain_indexes = [], grouped_indexes = [];
         
@@ -99,6 +106,19 @@ Clio = {
         }
     },
     
+    showPager: function(count, pagesize, current){
+        var pages = [];
+        var baseUrl = document.URL.replace(/\/\d+$/, '')
+        for(var p = 0; p <= count/pagesize; p++){
+            pages.push({title: (p + 1) + ' ', url: baseUrl + '/' + (p+1), 'class': (p == current ? 'current' : '')})
+        }
+        $('.pager').render({pages: pages}, ClioTemplates.pager);
+        if(count <= pagesize)
+            $('.pager').hide()
+        else
+            $('.pager').show()
+    },
+    
     setupEvents: function(){
         //sidebar
         $('#sidebar .group-title').live('click', function(){
@@ -126,7 +146,13 @@ $(document).ready(function(){
     }else if(document.URL.indexOf('list.html') != -1){
         var index_term = document.URL.split('#', 2)[1].split(':', 2);
         var index = index_term[0], term = index_term[1];
-        Clio.showList(index, term);
+        var page;
+        if(term.indexOf('/') != -1){
+            var term_page = term.split('/')
+            term = term_page[0]; page = term_page[1]
+        }
+        Clio.showList(index, term, page);
+        
     }else if(document.URL.indexOf('entry.html') != -1){
         var eid = document.URL.split('#', 2)[1];
         Clio.showEntry(eid);

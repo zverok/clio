@@ -13,7 +13,7 @@ ClioTemplates = {
             '.likes .lbody': {'like<-entry.likes':{
                 '.l_profile': 'like.from.name',
                 '.l_profile@href': 'http://friendfeed.com/#{like.from.id}',
-                '.l_profile@title': 'like.date'
+                '.l_profile@title': 'like.dateFriendly'
             }},
 
             '.comments': {'comment<-entry.comments':{
@@ -49,7 +49,7 @@ ClioTemplates = {
         '.likes .lbody': {'like<-likes':{
             '.l_profile': 'like.from.name',
             '.l_profile@href': 'http://friendfeed.com/#{like.from.id}',
-            '.l_profile@title': 'like.date'
+            '.l_profile@title': 'like.dateFriendly'
         }}
         
     },
@@ -82,13 +82,21 @@ ClioTemplates = {
     },
 
     sidebarSubindex: {
-            '.title a': 'index.meta.title',
-            '.title a@href': './index.html##{index.meta.descriptor}',
-            
-            '.box-body ul li': {'row<-index.rows': {
-                'a': 'row.title',
-                'a@href': './list.html##{index.meta.descriptor}:#{row.descriptor}'
-            }}
+        '.title a': 'index.meta.title',
+        '.title a@href': './index.html##{index.meta.descriptor}',
+        
+        '.box-body ul li': {'row<-index.rows': {
+            'a': 'row.title',
+            'a@href': './list.html##{index.meta.descriptor}:#{row.descriptor}'
+        }}
+    },
+    
+    pager: {
+        '#pages a': {'page<-pages': {
+            '.': 'page.title',
+            '@href': 'page.url',
+            '@class': 'page.class'
+        }}
     }
     
 }
