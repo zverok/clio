@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FriendFeed</title>
+    <link rel="stylesheet" href="./css/nano-theme-helvetica.css" type="text/css" />
+
+    <script src="./lib/jquery.js"></script>
+    <script src="./lib/pure.js"></script>
+    <script src="./lib/urlencode.js"></script>
+
+    <script src="./lib/clio-templates.js"></script>
+    <script src="./lib/clio.js"></script>
+</head>
+
+<body>
+    <div id="bodydiv">
+        <div id="container">
+            <div id="header">
+                <table>
+                    <tr>
+                        <td class="logo"><a href="/"><img src="/static/images/nano-logo.png?v=5ff0" alt="FriendFeed" style="width:227px;height:50px;" /></a></td>
+
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <form action="/search" method="get" id="searchform" name="searchform">
+                                            <input type="text" size="25" name="q" value="" class="textbox" id="searchbox" autocomplete="off" /> <input type="submit" value="Поиск" style="font-size:15px" />
+                                        </form>
+                                    </td>
+
+                                    <td id="extralinks">
+                                        <div>
+                                            <a href="/search/advanced">Advanced search</a>
+                                        </div>
+
+                                        <div>
+                                            <a href="/about/tools">Инструменты</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="sidebar">
+                <div id="grouped-indexes">
+                    <div class="box">
+                        <div class="box-bar">
+                            <div class="box-corner"></div>
+
+                            <div class="box-bar-text">
+                                <span class="title"><a href="(страница индекса)"></a></span>
+                            </div>
+                        </div>
+
+                        <div class="subbar" style="display:none"></div>
+
+                        <div class="box-body">
+                            <div class="group">
+                                <div class="group-title"><a href="#"></a></div>
+                                <ul class="group-contents" style="display:none;">
+                                    <li><a href="(урл списка)" class='sidebar-nav'></a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="box-bottom">
+                            <div class="box-corner"></div>
+                            <div class="box-spacer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="plain-indexes">
+                    <div class="box">
+                        <div class="box-bar">
+                            <div class="box-corner"></div>
+
+                            <div class="box-bar-text">
+                                <span class="title"><a href="(страница индекса)"></a></span>
+                            </div>
+                        </div>
+
+                        <div class="subbar" style="display:none"></div>
+
+                        <div class="box-body">
+                            <ul>
+                                <li><a href="(урл списка)" class='sidebar-nav'></a></li>
+                            </ul>
+                        </div>
+
+                        <div class="box-bottom">
+                            <div class="box-corner"></div>
+                            <div class="box-spacer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="body">
+                <div class="box white" id="page">
+                    <div class="box-bar home">
+                        <div class="box-corner"></div>
+
+                        <div class="box-bar-text">
+                            <div id="realtimectl" class="control">
+                                <div class="l_realtimepause" title="Приостановить обновления"></div>
+                            </div>
+
+                            <div class="control">
+                                <a href="#" class="l_deliveryoptions" feedid="00000000000000000000000000000000" category="lists">E-mail / IM</a>
+                            </div>
+
+                            <div id="realtimestatus" class="control"></div><span class="title"><a href="/">Главная страница</a></span>
+                        </div>
+                    </div>
+
+                    <div class="subbar home" style="display:none"></div>
+
+                    <div class="box-body">
+                        <div id="feed">
+                            <div class="l_entry entry">
+                                <div class="profile">
+                                    <a href="(урл юзера)" class="l_profile"><img src="http://m.friendfeed-media.com/p-813023f52a6140baa154ab33c5303676-medium-1007" alt="(имя)" class="picture medium" /></a>
+                                </div>
+
+                                <div class="body">
+                                    <div class="ebody">
+                                        <div class="title">
+                                            <div class="name">
+                                                <a href="(урл юзера)" class="l_profile"></a>
+                                            </div>
+
+                                            <div class="text">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info">
+                                        <a class="date" href="(урл записи)"></a>
+                                    </div>
+
+                                    <div class="likes">
+                                        <span class="lbody"><a href="(урл юзера)" class="l_profile"></a></span>
+                                    </div>
+
+                                    <div class="comments">
+                                        <div class="comment">
+                                            <div class="quote" title="(дата)"></div>
+
+                                            <div class="content">
+                                                 - <a href="(урл юзера)" class="l_profile"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="clear"></div>
+                            </div>
+
+                        </div>
+                        <div style="clear:both; height:12px"></div>
+                    </div>
+
+                    <div class="box-bottom">
+                        <div class="box-corner"></div>
+
+                        <div class="box-spacer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+                ©2010 FriendFeed - <select onchange="setLocale(this.options[this.selectedIndex].value)">
+                    <option value="de">
+                        Deutsch
+                    </option>
+
+                    <option value="en">
+                        English
+                    </option>
+
+                    <option value="es">
+                        Español
+                    </option>
+
+                    <option value="fa">
+                        فارسی
+                    </option>
+
+                    <option value="fr">
+                        Français
+                    </option>
+
+                    <option value="it">
+                        Italiano
+                    </option>
+
+                    <option value="ja">
+                        日本語
+                    </option>
+
+                    <option value="ru" selected="selected">
+                        русский язык
+                    </option>
+
+                    <option value="tr">
+                        Türkçe
+                    </option>
+
+                    <option value="ud">
+                        uʍop ǝpısd∩
+                    </option>
+
+                    <option value="zh-cn">
+                        中文(简体)
+                    </option>
+                </select> - <a href="/about/">О нас</a> - <a href="/about/tools">Инструменты и виджеты</a> - <a href="http://blog.friendfeed.com/">Блог</a> - <a href="/api/">Программный интерфейс (API)</a> - <a href="/about/help">Справка</a> - <a href="/about/privacy">Защита конфиденциальности</a> - <a href="/about/terms">Условия использования</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="extradiv"></div>
+
+    <div id="extradivtoo"></div>
+</body>
+</html>
