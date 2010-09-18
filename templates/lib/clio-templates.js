@@ -31,6 +31,9 @@ ClioTemplates = {
         '.info .date': 'dateFriendly',
         '.info .date@href': 'url',
         
+        '.info .service': 'via.name',
+        '.info .service@href': 'via.url',
+        
         '.comments': {'comment<-comments':{
             '.quote@title': 'comment.dateFriendly',
             '+.content': 'comment.body',

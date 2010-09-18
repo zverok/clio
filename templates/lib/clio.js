@@ -33,6 +33,9 @@ Clio = {
                     if(this['descriptor'] == trm) row = this;
                 });
 
+            console.log(idx)
+            $('.home .title a').text(idx.meta.title + ': ' + row.title)
+
             var entries = [];
             $.each(row.entries, function(){
                 $.getJSON(Clio.entriesURL() + this + '.js', function(entry){
@@ -52,7 +55,7 @@ Clio = {
     
     showEntry: function(eid){
         $.getJSON(Clio.entriesURL() + eid + '.js', function(entry){
-            $('title').text(entry.body)
+            $('title').text(entry.body.replace(/<a.+?<\/a>/, '').substring(0, 50) + '...')
             
             $('div.body').render(entry, ClioTemplates.entry);
         });
@@ -105,9 +108,13 @@ Clio = {
         });
         
         $('#sidebar .sidebar-nav').live('click', function(){
-            window.location.hash = $(this).attr('href').match(/\#.+/)[0];
-            window.location.reload()
-            return false;
+            if(window.location.pathname.indexOf('list.html') != -1){
+                window.location.hash = $(this).attr('href').match(/\#.+/)[0];
+                window.location.reload()
+                return false;
+            }else{
+                return true;
+            }
         });
     }
     
