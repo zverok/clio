@@ -8,7 +8,7 @@ ClioTemplates = {
             '.ebody .text': 'entry.body',
 
             '.info .date': 'entry.dateFriendly',
-            '.info .date@href': './entry.html##{entry.name}',
+            '.info .date@href': './entry.html?id=#{entry.name}',
 
             '.likes .lbody': {'like<-entry.likes':{
                 '.l_profile': 'like.from.name',
@@ -63,7 +63,7 @@ ClioTemplates = {
                 '.group-title a': 'group.title',
                 'ul li': {'row<-group.rows': {
                     'a': 'row.title',
-                    'a@href': './list.html##{index.meta.descriptor}:#{row.descriptor}'
+                    'a@href': './list.html?index=#{index.meta.descriptor}&term=#{row.descriptor}'
                 }}
             }}
         }}
@@ -76,7 +76,7 @@ ClioTemplates = {
             
             '.box-body ul li': {'row<-index.rows': {
                 'a': 'row.title',
-                'a@href': './list.html##{index.meta.descriptor}:#{row.descriptor}'
+                'a@href': './list.html?index=#{index.meta.descriptor}&term=#{row.descriptor}'
             }}
         }}
     },
@@ -87,7 +87,7 @@ ClioTemplates = {
         
         '.box-body ul li': {'row<-index.rows': {
             'a': 'row.title',
-            'a@href': './list.html##{index.meta.descriptor}:#{row.descriptor}'
+            'a@href': './list.html?index=#{index.meta.descriptor}&term=#{row.descriptor}'
         }}
     },
     

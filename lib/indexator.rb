@@ -31,11 +31,10 @@ class Index
     end
     
     def result
-        #pp @rows.values
         rows = @rows.values.
                 sort_by{|r| r['descriptor']}.
                 map{|r| r.merge(
-                    'entries' => r['entries'].sort_by(&:first).map(&:last),
+                    'entries' => r['entries'].sort_by(&:first).reverse.map(&:last),
                     'descriptor' => CGI.escape(r['descriptor'])
                     )
                 }
@@ -120,7 +119,15 @@ class MonthDaysIndex < Index
     
     def key(entry); parse_time(entry['date']) end
     def row_descriptor(tm); tm.strftime('%d') end
-    #def row_title(tm); tm.strftime('%d %B %Y') end
+end
+
+class AllIndex < Index
+    def descriptor; 'all' end
+    def title; 'Все' end
+    
+    def key(entry)
+        'all'
+    end
 end
 
 #define_list 'all' do

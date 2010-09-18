@@ -15,7 +15,7 @@ $:.unshift File.join(base_path, 'lib')
 $:.unshift File.join(base_path, 'vendors')
 require 'indexator'
 
-INDEXES = [DateIndex, HashtagIndex]
+INDEXES = [DateIndex, HashtagIndex, AllIndex]
 indexes = INDEXES.map(&:new)
 
 Dir[File.join(entries_path, '*.js')].each do |f|

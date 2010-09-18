@@ -5,21 +5,16 @@ Clio = {
     indexesURL: function(){return Clio.dataURL() + 'indexes/';},
     entriesURL: function(){return Clio.dataURL() + 'entries/';},
     
-    hashtagsURL: function(){return Clio.indexesURL() + 'hashtags.js';},
-
-    showIndex: function(){
-        $.getJSON(Clio.hashtagsURL(), function(data){
-            $('ul').render({hashtags: data.rows}, {
-                li: {'hashtag<-hashtags':{
-                    'a': 'hashtag.title', 
-                    'a@href+': 'hashtag.descriptor'
-                }}
-            })
+    showMain: function(page){
+        $.getJSON(Clio.indexesURL() + 'all.js', function(idx){
+            row = idx.rows[0];
+            Clio.showList(row.entries, page);
         });
+        Clio.showSidebar();
     },
     
-    showList: function(index, trm, page){
-        var term = Url.decode(trm.replace('%C2%A0', '%20'))
+    showIndexEntry: function(index, trm, page){
+        var term = Url.decode(trm.toString().replace('%C2%A0', '%20'))
         $.getJSON(Clio.indexesURL() + index + '.js', function(idx){
             var row;
             if(idx.meta.kind == 'grouped')
@@ -36,23 +31,9 @@ Clio = {
             var shortTitle = idx.meta.title + ': ' + row.title
             $('title').text(shortTitle)
             $('.home .title a').text(shortTitle)
+            
+            Clio.showList(row.entries, page)
 
-            var pagesize = ClioSettings.pageSize;
-            var p = page ? parseInt(page)-1 : 0
-            var s = p*pagesize, e = (p+1)*pagesize;
-            var entryIds = row.entries.slice(s, e)
-            var entries = [];
-            $.each(entryIds, function(){
-                $.getJSON(Clio.entriesURL() + this + '.js', function(entry){
-                    entries.push(entry);
-                    if(entries.length == entryIds.length){
-                        $('#feed').render({entries: entries}, ClioTemplates.feed);
-                    }
-                })
-            });
-            
-            Clio.showPager(row.entries.length, pagesize, p);
-            
             // если в имени индекса есть "|", то он и является вторичным индексом, который надо сейчас отобразить
             var subindex = index.indexOf('|') > -1 ? index : row.subindex 
             Clio.showSidebar(index, trm, subindex);
@@ -60,7 +41,26 @@ Clio = {
         
     },
     
+    showList: function(entry_ids, page){
+        var pagesize = ClioSettings.pageSize;
+        var p = page ? parseInt(page)-1 : 0
+        var s = p*pagesize, e = (p+1)*pagesize;
+        var entryIds = entry_ids.slice(s, e)
+        var entries = [];
+        $.each(entryIds, function(){
+            $.getJSON(Clio.entriesURL() + this + '.js', function(entry){
+                entries.push(entry);
+                if(entries.length == entryIds.length){
+                    $('#feed').render({entries: entries}, ClioTemplates.feed);
+                }
+            })
+        });
+        
+        Clio.showPager(entry_ids.length, pagesize, p);
+    },
+    
     showEntry: function(eid){
+        console.log(Clio.entriesURL() + eid + '.js')
         $.getJSON(Clio.entriesURL() + eid + '.js', function(entry){
             $('title').text(entry.body.replace(/<a.+?<\/a>/, '').substring(0, 50) + '...')
             
@@ -84,7 +84,7 @@ Clio = {
                     $('#sidebar #plain-indexes').render({indexes: plain_indexes}, ClioTemplates.sidebarPlainIndexes);
                     
                     if(indexdescr && term){
-                        var el = $('#sidebar a[href*=./list.html#' + indexdescr + ':' + term + ']')
+                        var el = $('#sidebar a[href*=./list.html?index=' + indexdescr + '&term=' + term + ']')
                         el.attr('style', 'color:red');
                         el.parents('.group-contents').show();
                     }
@@ -98,7 +98,7 @@ Clio = {
                 $('#sidebar #subindex').render({index: index}, ClioTemplates.sidebarSubindex);
 
                 //на случай, если выбранный термин относится ко вторичному индексу
-                var el = $('#sidebar a[href*=./list.html#' + indexdescr + ':' + term + ']')
+                var el = $('#sidebar a[href*=./list.html?index=' + indexdescr + '&term=' + term + ']')
                 el.attr('style', 'color:red');
             });
         }else{
@@ -108,9 +108,10 @@ Clio = {
     
     showPager: function(count, pagesize, current){
         var pages = [];
-        var baseUrl = document.URL.replace(/\/\d+$/, '')
+        var baseUrl = document.URL.replace(/&?page=\d+$/, '')
+        baseUrl += (baseUrl.indexOf('?') == -1) ? '?' : '&'
         for(var p = 0; p <= count/pagesize; p++){
-            pages.push({title: (p + 1) + ' ', url: baseUrl + '/' + (p+1), 'class': (p == current ? 'current' : '')})
+            pages.push({title: (p + 1) + ' ', url: baseUrl + 'page=' + (p+1), 'class': (p == current ? 'current' : '')})
         }
         $('.pager').render({pages: pages}, ClioTemplates.pager);
         if(count <= pagesize)
@@ -142,20 +143,13 @@ Clio = {
 
 $(document).ready(function(){
     if(document.URL.indexOf('index.html') != -1){
-        Clio.showIndex();
+        Clio.showMain($.query.get('page'));
     }else if(document.URL.indexOf('list.html') != -1){
-        var index_term = document.URL.split('#', 2)[1].split(':', 2);
-        var index = index_term[0], term = index_term[1];
-        var page;
-        if(term.indexOf('/') != -1){
-            var term_page = term.split('/')
-            term = term_page[0]; page = term_page[1]
-        }
-        Clio.showList(index, term, page);
+
+        Clio.showIndexEntry($.query.get('index'), $.query.get('term'), $.query.get('page'));
         
     }else if(document.URL.indexOf('entry.html') != -1){
-        var eid = document.URL.split('#', 2)[1];
-        Clio.showEntry(eid);
+        Clio.showEntry($.query.get('id'));
     }
     
     Clio.setupEvents()
