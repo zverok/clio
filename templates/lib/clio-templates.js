@@ -28,6 +28,12 @@ ClioTemplates = {
     entry: {
         '.ebody .text': 'body',
         
+        '.ebody .images.media .container': {'thumbnail<-thumbnails':{
+            'a img@src': 'thumbnail.url',
+            'a@href': 'thumbnail.link',
+            'a img@style': 'width:#{thumbnail.width}; height:#{thumbnail.height};'
+        }},
+        
         '.info .date': 'dateFriendly',
         '.info .date@href': 'url',
         
