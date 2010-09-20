@@ -30,3 +30,11 @@
 .group-contents li{
     font-size: 13px;
 }
+
+/*.l_entry .likes a{
+    padding: 0 1px 0 1px;
+    border-left: 1px solid silver;
+}*/
+
+.l_entry .likes .lbody:after{content: ", "}
+.l_entry .likes .lbody:last-child:after{content: " оценили этот материал"}

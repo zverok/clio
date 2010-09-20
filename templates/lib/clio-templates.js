@@ -27,14 +27,14 @@ ClioTemplates = {
                 '.l_profile': 'like.from.name',
                 '.l_profile@href': 'http://friendfeed.com/#{like.from.id}',
                 '.l_profile@title': 'like.dateFriendly'
-            }},
+            }}
 
-            '.comments': {'comment<-entry.comments':{
+            /*'.comments': {'comment<-entry.comments':{
                 '.quote@title': 'comment.dateFriendly',
                 '+.content': 'comment.body',
                 '.content .l_profile': 'comment.from.name',
                 '.content .l_profile@href': 'http://friendfeed.com/#{comment.from.id}'
-            }},
+            }},*/
         }}
     },
 
