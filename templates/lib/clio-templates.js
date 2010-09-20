@@ -7,8 +7,21 @@ ClioTemplates = {
             '.ebody .name a@href': 'http://friendfeed.com/#{entry.from.id}',
             '.ebody .text': 'entry.body',
 
+            '.ebody .images.media .container': {'thumbnail<-entry.thumbnails':{
+                'a img@src': 'thumbnail.url',
+                'a@href': 'thumbnail.link',
+                'a img@style': 'width:#{thumbnail.width}; height:#{thumbnail.height};'
+            }},
+            
+            '.ebody .images.media@class+': function(o){return o.item.thumbnails ? '' : 'hidden'},
+
             '.info .date': 'entry.dateFriendly',
             '.info .date@href': './entry.html?id=#{entry.name}',
+
+            '.info .via@class+': function(o){return o.item.via ? '' : ' hidden'},
+        
+            '.info .service': 'entry.via.name',
+            '.info .service@href': 'entry.via.url',
 
             '.likes .lbody': {'like<-entry.likes':{
                 '.l_profile': 'like.from.name',
@@ -34,8 +47,12 @@ ClioTemplates = {
             'a img@style': 'width:#{thumbnail.width}; height:#{thumbnail.height};'
         }},
         
+        '.ebody .images.media@class+': function(o){return o.context.thumbnails ? '' : 'hidden'},
+        
         '.info .date': 'dateFriendly',
         '.info .date@href': 'url',
+        
+        '.info .via@class+': function(o){return o.context.via ? '' : ' hidden'},
         
         '.info .service': 'via.name',
         '.info .service@href': 'via.url',

@@ -1,0 +1,32 @@
+.hidden{
+    display: none;
+}
+
+.clio-current{
+    color: black;
+    font-weight: bold;
+}
+
+.group-contents{
+    display: none;
+}
+
+.clio-expanded .group-contents{
+    display: block;
+}
+
+#subindex li{
+    display: inline-block;
+    padding: 1px;
+    margin: 0 2px 0 2px;
+    font-size: 13px;
+    /*border-right: 1px solid silver;*/
+}
+
+.group-contents{
+    margin-left: 8px !important;
+}
+
+.group-contents li{
+    font-size: 13px;
+}

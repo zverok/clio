@@ -60,7 +60,6 @@ Clio = {
     },
     
     showEntry: function(eid){
-        console.log(Clio.entriesURL() + eid + '.js')
         $.getJSON(Clio.entriesURL() + eid + '.js', function(entry){
             $('title').text(entry.body.replace(/<a.+?<\/a>/, '').substring(0, 50) + '...')
             
@@ -85,8 +84,8 @@ Clio = {
                     
                     if(indexdescr && term){
                         var el = $('#sidebar a[href*=./list.html?index=' + indexdescr + '&term=' + term + ']')
-                        el.attr('style', 'color:red');
-                        el.parents('.group-contents').show();
+                        el.addClass('clio-current')
+                        el.parents('.group').addClass('clio-expanded');
                     }
                 }
             });
@@ -99,7 +98,7 @@ Clio = {
 
                 //на случай, если выбранный термин относится ко вторичному индексу
                 var el = $('#sidebar a[href*=./list.html?index=' + indexdescr + '&term=' + term + ']')
-                el.attr('style', 'color:red');
+                el.addClass('clio-current');
             });
         }else{
             $('#sidebar #subindex').hide()
@@ -111,7 +110,7 @@ Clio = {
         var baseUrl = document.URL.replace(/&?page=\d+$/, '')
         baseUrl += (baseUrl.indexOf('?') == -1) ? '?' : '&'
         for(var p = 0; p <= count/pagesize; p++){
-            pages.push({title: (p + 1) + ' ', url: baseUrl + 'page=' + (p+1), 'class': (p == current ? 'current' : '')})
+            pages.push({title: (p + 1) + ' ', url: baseUrl + 'page=' + (p+1), 'class': (p == current ? 'clio-current' : '')})
         }
         $('.pager').render({pages: pages}, ClioTemplates.pager);
         if(count <= pagesize)
@@ -123,19 +122,9 @@ Clio = {
     setupEvents: function(){
         //sidebar
         $('#sidebar .group-title').live('click', function(){
-            $('.group-contents').hide();
-            $(this).parents('.group').find('.group-contents').show()
+            $('.group').removeClass('clio-expanded');
+            $(this).parents('.group').addClass('clio-expanded');
             return false;
-        });
-        
-        $('#sidebar .sidebar-nav').live('click', function(){
-            if(window.location.pathname.indexOf('list.html') != -1){
-                window.location.hash = $(this).attr('href').match(/\#.+/)[0];
-                window.location.reload()
-                return false;
-            }else{
-                return true;
-            }
         });
     }
     
