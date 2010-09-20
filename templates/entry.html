@@ -4,8 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-    <title></title>
+    <title>FriendFeed</title>
     <link rel="stylesheet" href="./css/nano-theme-helvetica.css" type="text/css" />
     <link rel="stylesheet" href="./css/clio.css" type="text/css" />
 
@@ -15,6 +14,7 @@
     <script src="./lib/jquery.query.js"></script>
 
     <script src="./lib/clio-templates.js"></script>
+    <script src="./lib/settings.js"></script>
     <script src="./lib/clio.js"></script>
 </head>
 
@@ -24,28 +24,9 @@
             <div id="header">
                 <table>
                     <tr>
-                        <td class="logo"><a href="/"><img src="/static/images/nano-logo.png?v=5ff0" alt="FriendFeed" style="width:227px;height:50px;" /></a></td>
+                        <td class="logo"><a href="./index.html"><img src="./images/nano-logo.png" alt="FriendFeed" style="width:227px;height:50px;" /></a></td>
 
                         <td>
-                            <table>
-                                <tr>
-                                    <td>
-                                        <form action="/search" method="get" id="searchform" name="searchform">
-                                            <input type="text" size="25" name="q" value="" class="textbox" id="searchbox" autocomplete="off" /> <input type="submit" value="Поиск" style="font-size:15px" />
-                                        </form>
-                                    </td>
-
-                                    <td id="extralinks">
-                                        <div>
-                                            <a href="/search/advanced">Advanced search</a>
-                                        </div>
-
-                                        <div>
-                                            <a href="/about/tools">Инструменты</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
                         </td>
                     </tr>
                 </table>
@@ -90,7 +71,7 @@
                         <div class="box-body">
                             <div class="group">
                                 <div class="group-title"><a href="#"></a></div>
-                                <ul class="group-contents" style="display:none;">
+                                <ul class="group-contents">
                                     <li><a href="(урл списка)" class='sidebar-nav'></a></li>
                                 </ul>
                             </div>
@@ -205,51 +186,7 @@
             </div>
 
             <div id="footer">
-                ©2010 FriendFeed - <select onchange="setLocale(this.options[this.selectedIndex].value)">
-                    <option value="de">
-                        Deutsch
-                    </option>
-
-                    <option value="en">
-                        English
-                    </option>
-
-                    <option value="es">
-                        Español
-                    </option>
-
-                    <option value="fa">
-                        فارسی
-                    </option>
-
-                    <option value="fr">
-                        Français
-                    </option>
-
-                    <option value="it">
-                        Italiano
-                    </option>
-
-                    <option value="ja">
-                        日本語
-                    </option>
-
-                    <option value="ru" selected="selected">
-                        русский язык
-                    </option>
-
-                    <option value="tr">
-                        Türkçe
-                    </option>
-
-                    <option value="ud">
-                        uʍop ǝpısd∩
-                    </option>
-
-                    <option value="zh-cn">
-                        中文(简体)
-                    </option>
-                </select> - <a href="/about/">О нас</a> - <a href="/about/tools">Инструменты и виджеты</a> - <a href="http://blog.friendfeed.com/">Блог</a> - <a href="/api/">Программный интерфейс (API)</a> - <a href="/about/help">Справка</a> - <a href="/about/privacy">Защита конфиденциальности</a> - <a href="/about/terms">Условия использования</a>
+                ©2010 FriendFeed (and a bit of <a href="http://friendfeed.com/zverok">zverok</a>’s ingenuity)
             </div>
         </div>
     </div>
