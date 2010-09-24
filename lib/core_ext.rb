@@ -236,12 +236,6 @@ class String
         gsub("\n", delim)
     end
 
-    if RUBY_VERSION < '1.9.0'
-        def force_encoding(*arg); self end
-    end
-
-    def force_utf8; force_encoding('UTF-8') end
-
     def surround(before, after); before + self + after end
 
     if RUBY_VERSION < '1.8.7'

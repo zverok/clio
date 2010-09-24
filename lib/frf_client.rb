@@ -1,14 +1,15 @@
-require 'typhoeus'
-require 'json'
+require 'net/http'
 require 'base64'
+require 'fileutils'
 
+require 'json'
 require 'rutils/datetime/datetime'
 
-class String
-    def to_json
-        '"' + self.gsub('\\', '\\\\\\').gsub('"', '\"') + '"'
-    end
-end
+#class String
+    #def to_json(*a)
+        #'"' + self.gsub('\\', '\\\\\\').gsub('"', '\"') + '"'
+    #end
+#end
 
 def parse_time(str)
     str =~ /(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)Z/
@@ -17,11 +18,7 @@ end
 
 class FriendFeedClient
     def initialize(user, key)
-        @headers = if key
-            {"Authorization" => ("Basic " + Base64.b64encode("#{user}:#{key}"))}
-        else
-            {}
-        end
+        @user, @key = user, key
     end
     
     def feed(name, params)
@@ -29,15 +26,19 @@ class FriendFeedClient
     end
 
     def request(method, params = {})
-        url = construct_url(method, params)
-        response = Typhoeus::Request.get(url, :headers => @headers)
+        response = nil
+        Net::HTTP.start 'friendfeed-api.com', 80 do |http|
+            req = Net::HTTP::Get.new(construct_url(method, params))
+            req.basic_auth(@user, @key) if @key
+            response = http.request(req)
+        end
         response = JSON.parse(response.body)
         response['errorCode'] && raise(RuntimeError, response['errorCode']) 
         response
     end
 
     def construct_url(method, params)
-        "http://friendfeed-api.com/v2/#{method}?" + params.map{|k, v| "#{k}=#{v}"}.join('&')
+        "/v2/#{method}?" + params.map{|k, v| "#{k}=#{v}"}.join('&')
     end
     
     def self.extract_feed(user, key, feedname, path, start = 0)

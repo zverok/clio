@@ -1,6 +1,5 @@
 $KCODE = 'u'
 
-require 'rubygems'
 require 'pp'
 require 'fileutils'
 require 'cgi'
