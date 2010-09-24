@@ -14,8 +14,8 @@ Clio = {
     },
     
     showIndexEntry: function(index, trm, page){
-        var term = trm; //Url.decode(trm.toString().replace('%C2%A0', '%20'))
-        var trm = Url.encode(trm).replace('%20', '+');
+        var term = trm.toString(); //Url.decode(trm.toString().replace('%C2%A0', '%20'))
+        var trm = Url.encode(trm.toString()).replace('%20', '+');
         $.getJSON(Clio.indexesURL() + index + '.js', function(idx){
             var row;
             if(idx.meta.kind == 'grouped')
@@ -108,7 +108,7 @@ Clio = {
     
     showPager: function(count, pagesize, current){
         var pages = [];
-        var baseUrl = document.URL.replace(/&?page=\d+$/, '')
+        var baseUrl = document.URL.replace(/[\?&]page=\d+$/, '')
         baseUrl += (baseUrl.indexOf('?') == -1) ? '?' : '&'
         for(var p = 0; p <= count/pagesize; p++){
             pages.push({title: (p + 1) + ' ', url: baseUrl + 'page=' + (p+1), 'class': (p == current ? 'clio-current' : '')})

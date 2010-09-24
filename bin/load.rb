@@ -11,6 +11,10 @@ $:.unshift File.join(base_path, 'vendors')
 require 'core_ext'
 require 'frf_client'
 
-user, key, * = *ARGV
+#user, key, * = *ARGV
+user, start, * = *ARGV
+start = start.to_i
 
-FriendFeedClient.extract_feed(user, key, user, File.join(base_path, 'result', user, 'data', 'entries'))
+puts File.join(base_path, 'result', user, 'data', 'entries')
+#FriendFeedClient.extract_feed(user, nilkey, user, File.join(base_path, 'result', user, 'data', 'entries'), start)
+FriendFeedClient.extract_feed(user, nil, user, File.join(base_path, 'result', user, 'data', 'entries'), start)

@@ -40,15 +40,16 @@ class FriendFeedClient
         "http://friendfeed-api.com/v2/#{method}?" + params.map{|k, v| "#{k}=#{v}"}.join('&')
     end
     
-    def self.extract_feed(user, key, feedname, path)
+    def self.extract_feed(user, key, feedname, path, start = 0)
         frf = new(user, key)
-        s = 0
+        s = start
         page = 100
         while true
             data = frf.feed(feedname, :start => s, :num => page)
             break if data['entries'].empty?
             puts "Loaded %i entries, starting from %i" % [page, s]
             
+            le = nil
             data['entries'].each do |e|
                 ename = e['url'].gsub("http://friendfeed.com/#{user}/", '').gsub("/", '__')
                 name = File.join(path, ename + ".js")
@@ -59,7 +60,10 @@ class FriendFeedClient
                 e['likes'] && e['likes'] = e['likes'].sort_by{|l| l['date']}.reverse
                 FileUtils.makedirs(File.dirname(name))
                 File.write(name, e.to_json)
+                le = e
             end
+            puts le['dateFriendly']
+            
             s += page
         end
     end

@@ -18,6 +18,7 @@ require 'indexator'
 INDEXES = [DateIndex, HashtagIndex, AllIndex]
 indexes = INDEXES.map(&:new)
 
+p Dir[File.join(entries_path, '*.js')].count
 Dir[File.join(entries_path, '*.js')].each do |f|
     text = File.read(f)
     name = f.sub(%r{.+/}, '')
@@ -26,3 +27,4 @@ Dir[File.join(entries_path, '*.js')].each do |f|
 end
 
 indexes.each{|i| i.save(indexes_path)}
+

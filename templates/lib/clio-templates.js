@@ -1,10 +1,11 @@
 ClioTemplates = {
     feed: {
         '.l_entry': {'entry<-entries': {
-            '.profile a@href': 'http://friendfeed.com/#{entry.from.id}',
+            /*'.profile a@href': 'http://friendfeed.com/#{entry.from.id}',
             '.profile img@title': 'entry.from.name',
             '.ebody .name a': 'entry.from.name',
-            '.ebody .name a@href': 'http://friendfeed.com/#{entry.from.id}',
+            '.ebody .name a@href': 'http://friendfeed.com/#{entry.from.id}',*/
+            
             '.ebody .text': 'entry.body',
 
             '.ebody .images.media .container': {'thumbnail<-entry.thumbnails':{
