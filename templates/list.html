@@ -9,13 +9,17 @@
     <link rel="stylesheet" href="./css/clio.css" type="text/css" />
 
     <script src="./lib/jquery.js"></script>
+    <script type="text/javascript">
+        jQuery.query = { numbers: false, hash: true };
+    </script>
+    <script src="./lib/jquery.query.js"></script>
     <script src="./lib/pure.js"></script>
     <script src="./lib/urlencode.js"></script>
-    <script src="./lib/jquery.query.js"></script>
 
     <script src="./lib/clio-templates.js"></script>
     <script src="./lib/settings.js"></script>
     <script src="./lib/clio.js"></script>
+
 </head>
 
 <body>
@@ -166,9 +170,8 @@
                                     <div class="likes">
                                         <span class="lbody"><a href="(урл юзера)" class="l_profile"></a></span>
                                     </div>
-                                    
-                                    <!--
-                                    <div class="comments">
+
+                                    <div class="comments all_comments">
                                         <div class="comment">
                                             <div class="quote" title="(дата)"></div>
 
@@ -177,7 +180,40 @@
                                             </div>
                                         </div>
                                     </div>
-                                    -->
+
+                                    <div class="comments first_comments">
+                                        <div class="comment">
+                                            <div class="quote" title="(дата)"></div>
+
+                                            <div class="content">
+                                                 - <a href="(урл юзера)" class="l_profile"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="comments middle_comments expandcomment">
+                                        <a class="hidden_comments_stub l_expandcomments" href='#'></a>
+                                        <div class="hidden_comments_contents">
+                                            <div class="comment">
+                                                <div class="quote" title="(дата)"></div>
+
+                                                <div class="content">
+                                                     - <a href="(урл юзера)" class="l_profile"></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="comments last_comments">
+                                        <div class="comment">
+                                            <div class="quote" title="(дата)"></div>
+
+                                            <div class="content">
+                                                 - <a href="(урл юзера)" class="l_profile"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                                 <div class="clear"></div>

@@ -35,8 +35,8 @@ Clio = {
             
             Clio.showList(row.entries, page)
 
-            // если в имени индекса есть "|", то он и является вторичным индексом, который надо сейчас отобразить
-            var subindex = index.indexOf('|') > -1 ? index : row.subindex 
+            // если в имени индекса есть "__", то он и является вторичным индексом, который надо сейчас отобразить
+            var subindex = index.indexOf('__') > -1 ? index : row.subindex 
             Clio.showSidebar(index, trm, subindex);
         });
         
@@ -50,9 +50,20 @@ Clio = {
         var entries = [];
         $.each(entryIds, function(){
             $.getJSON(Clio.entriesURL() + this + '.js', function(entry){
+                if(entry.comments && entry.comments.length > 3){
+                    entry.firstComments = [entry.comments[0]]
+                    entry.lastComments = [entry.comments[entry.comments.length-1]]
+                    entry.hiddenComments = entry.comments.slice(1, entry.comments.length-1)
+                    delete(entry.comments)
+                }
                 entries.push(entry);
                 if(entries.length == entryIds.length){
                     $('#feed').render({entries: entries}, ClioTemplates.feed);
+                    $('.middle_comments').each(function(){
+                        if($(this).find('.comment').length > 0){
+                            $(this).find('.hidden_comments_stub').text($(this).find('.comment').length.toString() + ' more comments')
+                        }
+                    })
                 }
             })
         });
@@ -121,6 +132,11 @@ Clio = {
     },
     
     setupEvents: function(){
+        //show/hide comments
+        $('.hidden_comments_stub').live('click', function(){
+            $(this).parents('.middle_comments').addClass('clio-show-comments').removeClass('expandcomment')
+            return false;
+        });
         //sidebar
         $('#sidebar .group-title').live('click', function(){
             $('.group').removeClass('clio-expanded');
@@ -144,3 +160,4 @@ $(document).ready(function(){
     
     Clio.setupEvents()
 });
+

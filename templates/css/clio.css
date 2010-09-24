@@ -1,4 +1,4 @@
-.hidden{
+.hidden, [view=hidden]{
     display: none;
 }
 
@@ -38,3 +38,15 @@
 
 .l_entry .likes .lbody:after{content: ", "}
 .l_entry .likes .lbody:last-child:after{content: " оценили этот материал"}
+
+.middle_comments .hidden_comments_contents{
+    display: none;
+}
+
+.middle_comments.clio-show-comments .hidden_comments_contents{
+    display: block;
+}
+
+.middle_comments.clio-show-comments .hidden_comments_stub{
+    display: none;
+}

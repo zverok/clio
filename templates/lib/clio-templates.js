@@ -5,6 +5,13 @@ ClioTemplates = {
             '.profile img@title': 'entry.from.name',
             '.ebody .name a': 'entry.from.name',
             '.ebody .name a@href': 'http://friendfeed.com/#{entry.from.id}',*/
+
+            /*'+.comments.middle_comments': function(o){return o.hiddenComments ? "<a>Show " + (o.item.hiddenComments.length) + " more comments</a>" : ""},
+
+            '.comments.all_comments@view': function(o){console.log(o.item); return o.item.comments ? '' : 'hidden'},
+            '.comments.first_comment@view': function(o){return o.item.firstComment ? '' : 'hidden'},
+            '.comments.last_comment@view': function(o){return o.item.lastComment ? '' : 'hidden'},
+            '.comments.middle_comments@view': function(o){return o.item.hiddenComments ? '' : 'hidden'},*/
             
             '.ebody .text': 'entry.body',
 
@@ -14,7 +21,7 @@ ClioTemplates = {
                 'a img@style': 'width:#{thumbnail.width}; height:#{thumbnail.height};'
             }},
             
-            '.ebody .images.media@class+': function(o){return o.item.thumbnails ? '' : 'hidden'},
+            '.ebody .images.media@class+': function(o){return o.item.thumbnails ? '' : ' hidden'},
 
             '.info .date': 'entry.dateFriendly',
             '.info .date@href': './entry.html?id=#{entry.name}',
@@ -28,14 +35,37 @@ ClioTemplates = {
                 '.l_profile': 'like.from.name',
                 '.l_profile@href': 'http://friendfeed.com/#{like.from.id}',
                 '.l_profile@title': 'like.dateFriendly'
-            }}
+            }},
 
-            /*'.comments': {'comment<-entry.comments':{
+            /* between 1 and 3 comments */
+            '.comments.all_comments .comment': {'comment<-entry.comments':{
                 '.quote@title': 'comment.dateFriendly',
                 '+.content': 'comment.body',
                 '.content .l_profile': 'comment.from.name',
                 '.content .l_profile@href': 'http://friendfeed.com/#{comment.from.id}'
-            }},*/
+            }},
+
+            /* > 3 comments */
+            '.comments.first_comments .comment': {'comment<-entry.firstComments':{
+                '.quote@title': 'comment.dateFriendly',
+                '+.content': 'comment.body',
+                '.content .l_profile': 'comment.from.name',
+                '.content .l_profile@href': 'http://friendfeed.com/#{comment.from.id}'
+            }},
+
+            '.comments.last_comments .comment': {'comment<-entry.lastComments':{
+                '.quote@title': 'comment.dateFriendly',
+                '+.content': 'comment.body',
+                '.content .l_profile': 'comment.from.name',
+                '.content .l_profile@href': 'http://friendfeed.com/#{comment.from.id}'
+            }},
+            
+            '.comments.middle_comments .hidden_comments_contents .comment': {'comment<-entry.hiddenComments':{
+                '.quote@title': 'comment.dateFriendly',
+                '+.content': 'comment.body',
+                '.content .l_profile': 'comment.from.name',
+                '.content .l_profile@href': 'http://friendfeed.com/#{comment.from.id}'
+            }}
         }}
     },
 

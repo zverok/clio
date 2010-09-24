@@ -114,7 +114,7 @@ class MonthDaysIndex < Index
         @month = Time.local(*(month_descriptor + '-01').split('-'))
     end
     
-    def descriptor; "days_#{@month.strftime('%Y-%m')}" end
+    def descriptor; "days__#{@month.strftime('%Y-%m')}" end
     def title; @month.strftime('%B %Y') end
     
     def key(entry); parse_time(entry['date']) end
