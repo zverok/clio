@@ -278,10 +278,12 @@ end
 
 class File
     def File.write(path, contents, flags = '')
+        FileUtils.makedirs(File.dirname(path))
         File.open(path, "w#{flags}"){|of| of.write contents}
     end
 
     def File.append(path, contents, flags = '')
+        FileUtils.makedirs(File.dirname(path))
         File.open(path, "a#{flags}"){|of| of.write contents}
     end
 end

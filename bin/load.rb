@@ -12,4 +12,4 @@ require 'frf_client'
 
 user, key, * = *ARGV
 
-FriendFeedClient.extract_feed(user, key, user, File.join(base_path, 'result', user, 'data', 'entries'))
+FriendFeedClient.extract_feed(user, key, user, File.join(base_path, 'result', user))
