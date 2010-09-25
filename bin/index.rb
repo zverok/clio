@@ -36,7 +36,6 @@ templates_src = File.join(base_path, 'templates')
 templates_dst = File.join(base_path, 'result', user)
 Dir[File.join(templates_src, '**', '*.*')].each do |src|
     dst = src.sub(templates_src, templates_dst)
-    puts "#{src} => #{dst}"
     FileUtils.makedirs(File.dirname(dst))
     FileUtils.cp src, dst
 end

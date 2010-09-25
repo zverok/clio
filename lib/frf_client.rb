@@ -58,7 +58,6 @@ class FriendFeedClient
         while true
             data = frf.feed(feedname, :start => s, :num => page)
             break if data['entries'].empty?
-            puts "Loaded %i entries, starting from %i" % [page, s]
             
             le = nil
             data['entries'].each do |e|
@@ -72,9 +71,14 @@ class FriendFeedClient
                 File.write(name, e.to_json)
                 le = e
             end
+            puts "Loaded %i entries, starting from %i" % [page, s]
             puts le['dateFriendly']
             
             s += page
+            if s > 10_000
+                puts "10k entries limitation. That's all."
+                break
+            end
         end
     end
 end
