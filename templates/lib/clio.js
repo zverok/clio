@@ -75,7 +75,7 @@ Clio = {
         $.getJSON(Clio.entriesURL() + eid + '.js', function(entry){
             $('title').text(entry.body.replace(/<a.+?<\/a>/, '').substring(0, 50) + '...')
             
-            $('div.body').render(entry, ClioTemplates.entry);
+            $('div.entry').render(entry, ClioTemplates.entry);
         });
         
         Clio.showSidebar();

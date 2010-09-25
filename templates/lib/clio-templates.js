@@ -70,6 +70,11 @@ ClioTemplates = {
     },
 
     entry: {
+        '.profile a@href': 'http://friendfeed.com/#{from.id}',
+        '.profile img@title': 'from.name',
+        '.ebody .name a': 'from.name',
+        '.ebody .name a@href': 'http://friendfeed.com/#{from.id}',
+
         '.ebody .text': 'body',
         
         '.ebody .images.media .container': {'thumbnail<-thumbnails':{
