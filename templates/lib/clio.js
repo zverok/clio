@@ -14,8 +14,8 @@ Clio = {
     },
     
     showIndexEntry: function(index, trm, page){
-        var term = trm.toString(); //Url.decode(trm.toString().replace('%C2%A0', '%20'))
-        var trm = Url.encode(trm.toString()).replace('%20', '+');
+        var term = trm.toString(); 
+        var trm = Url.encode(trm.toString()).replace(/\%20/g, '+');
         $.getJSON(Clio.indexesURL() + index + '.js', function(idx){
             var row;
             if(idx.meta.kind == 'grouped')
