@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'pp'
+require 'fileutils'
+
+SRC_DIR = File.expand_path(File.dirname(__FILE__))
+TARGET_DIR = File.join(SRC_DIR, 'release', Time.now.strftime('clio-%Y-%m-%d'))
+
+[
+    '*.html', 'README.*',
+    'bin/**/*.*',
+    'lib/**/*.*',
+    'templates/**/*.*',
+    'vendors/**/*.*',
+].map{|pattern| Dir[pattern]}.flatten.
+    map{|path| File.expand_path(path)}.
+    map{|src| [src, src.sub(SRC_DIR, TARGET_DIR)]}.
+    each{|src, tgt| 
+        FileUtils.makedirs(File.dirname(tgt)) 
+        FileUtils.cp src, tgt
+        puts "#{src} => #{tgt}"
+    }
+
+target = File.basename(TARGET_DIR)
+`cd release && zip -r #{target}.zip #{target}`

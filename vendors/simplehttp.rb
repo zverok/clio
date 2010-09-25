@@ -174,9 +174,11 @@ class SimpleHttp
 	#
 	
 	def basic_authentication usr, pwd
-		str = Base64.encode64("#{usr}:#{pwd}")
-		str = "Basic #{str}"
-		@request_headers["Authorization"]=str
+		#str = Base64.encode64("#{usr}:#{pwd}")
+		#str = "Basic #{str}"
+        
+		#@request_headers["Authorization"]= str
+        @request_headers["Authorization"]= 'Basic ' + ["#{usr}:#{pwd}"].pack('m').delete("\r\n")
 	end
 	
 	#
