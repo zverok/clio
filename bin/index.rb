@@ -39,3 +39,5 @@ Dir[File.join(templates_src, '**', '*.*')].each do |src|
     FileUtils.makedirs(File.dirname(dst))
     FileUtils.cp src, dst
 end
+
+puts "Your archive is created, see file://%s/index.html" % templates_dst

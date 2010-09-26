@@ -13,3 +13,5 @@ require 'frf_client'
 user, key, * = *ARGV
 
 FriendFeedClient.extract_feed(user, key, user, File.join(base_path, 'result', user))
+
+puts "Data is loaded, remember to run `ruby bin/index.rb %s' to create HTML pages" % user
