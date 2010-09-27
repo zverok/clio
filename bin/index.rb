@@ -40,4 +40,4 @@ Dir[File.join(templates_src, '**', '*.*')].each do |src|
     FileUtils.cp src, dst
 end
 
-puts "Your archive is created, see file://%s/index.html" % templates_dst
+puts "Your archive is ready, see file://%s/index.html\n   ... or run `ruby bin/server.rb %s'" % [ templates_dst, user ]
