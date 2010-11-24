@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'simplehttp'
 require 'base64'
 require 'fileutils'

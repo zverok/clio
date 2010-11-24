@@ -1,10 +1,13 @@
-$KCODE = 'u'
+$KCODE = 'u' if RUBY_VERSION < '1.9'
 
 require 'pp'
 require 'fileutils'
 require 'cgi'
 
-user = ARGV.shift
+unless user = ARGV.shift
+	puts "Will not work without username ;)"
+	exit 1
+end
 base_path = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 indexes_path = File.join(base_path, 'result', user, 'data', 'indexes')
 entries_path = File.join(base_path, 'result', user, 'data', 'entries')

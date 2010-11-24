@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'json'
 require 'core_ext'
 
