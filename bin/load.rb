@@ -10,8 +10,9 @@ $:.unshift File.join(base_path, 'vendors')
 require 'core_ext'
 require 'frf_client'
 
-user, key, * = *ARGV
+user, key, feed, * = *ARGV
+feed ||= user
 
-FriendFeedClient.extract_feed(user, key, user, File.join(base_path, 'result', user))
+FriendFeedClient.extract_feed(user, key, feed, File.join(base_path, 'result', feed))
 
-puts "Data is loaded, remember to run `ruby bin/index.rb %s' to create HTML pages" % user
+puts "Data is loaded, remember to run `ruby bin/index.rb %s' to create HTML pages" % feed
