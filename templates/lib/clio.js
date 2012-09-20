@@ -119,9 +119,10 @@ Clio = {
     
     showPager: function(count, pagesize, current){
         var pages = [];
+        var last_page = (count-1)/pagesize;
         var baseUrl = document.URL.replace(/[\?&]page=\d+$/, '')
         baseUrl += (baseUrl.indexOf('?') == -1) ? '?' : '&'
-        for(var p = 0; p <= count/pagesize; p++){
+        for(var p = 0; p <= last_page; p++){
             pages.push({title: (p + 1) + ' ', url: baseUrl + 'page=' + (p+1), 'class': (p == current ? 'clio-current' : '')})
         }
         $('.pager').render({pages: pages}, ClioTemplates.pager);
