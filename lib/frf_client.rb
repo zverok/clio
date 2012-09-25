@@ -62,6 +62,8 @@ class FriendFeedClient
         case e.message
         when /Net::HTTPForbidden/
             log.error "Доступ запрещён: #{e.message.scan(%r{http://\S+}).flatten.first}"
+        when /Net::HTTPUnauthorized/
+            log.error "Авторизация не удалась (проверьте юзернейм и ремоут-ключ): #{e.message.scan(%r{http://\S+}).flatten.first}"
         else
             log.error "Ошибка: #{e.message}"
         end
@@ -91,7 +93,7 @@ class FriendFeedClient
     
     def raw_request(method, params = {})
         http = SimpleHttp.new construct_url(method, params)
-        http.basic_authentication @user, @key if @key
+        http.basic_authentication @user, @key
         
         # somehow internal SimpleHttp's redirection following fails
         http.register_response_handler(Net::HTTPRedirection){|request, response, shttp| 

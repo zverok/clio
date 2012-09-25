@@ -63,7 +63,7 @@ feeds.each do |feed|
             Indexator.new(base_path, path, logger).run
             puts "\n#{feed} загружен и проиндексирован, см. file://#{path}/index.html"
         else
-            puts "Загрузка #{feed} не удалась, смотрите логи"
+            puts "\nЗагрузка #{feed} не удалась, смотрите логи"
         end
     end
 end
