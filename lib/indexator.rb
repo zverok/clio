@@ -145,3 +145,58 @@ end
     #title 'Топ по лайкам'
     #reverse_sort_by{|entry| entry['likes'].size}
 #end
+
+class Indexator
+    def initialize(base_path, path, logger = nil)
+        @base_path, @path = base_path, path
+        @indexes_path = File.join(path, 'data', 'indexes')
+        @entries_path = File.join(path, 'data', 'entries')
+        @log = logger || SilenceLogger.new
+    end
+
+
+    INDEXES = [DateIndex, HashtagIndex, AllIndex]
+
+    def run
+        log.info "Начато #{description}"
+        FileUtils.makedirs @indexes_path
+
+        log.info "#{description}: папки созданы, читаем записи"
+
+        indexes = INDEXES.map(&:new)
+
+        # index all entries
+        Dir[File.join(@entries_path, '*.js')].each do |f|
+            text = File.read(f)
+            name = f.sub(%r{.+/}, '')
+            entry =  JSON.parse(text)
+            indexes.each{|i| i.put(entry)}
+        end
+
+        log.info "#{description}: записи прочитаны, сохраняем индексы"
+
+        # save indexes
+        indexes.each{|i| i.save(@indexes_path)}
+
+        log.info "#{description}: индексы сохранены, копируем шаблоны"
+
+        # copy templates
+        templates_src = File.join(@base_path, 'templates')
+        templates_dst = @path
+        
+        Dir[File.join(templates_src, '**', '*.*')].each do |src|
+            dst = src.sub(templates_src, templates_dst)
+            FileUtils.makedirs(File.dirname(dst))
+            FileUtils.cp src, dst
+        end
+
+        log.info "#{description}: готово"
+    end
+
+    private
+
+    attr_reader :log
+    def description
+        "индексирование #{@path}"
+    end
+end

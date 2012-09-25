@@ -12,15 +12,74 @@ def parse_time(str)
 end
 
 class FriendFeedClient
-    def initialize(user, key)
+    def initialize(user, key, logger = nil)
         @user, @key = user, key
+        @log = logger || SilenceLogger.new
+        @pagesize = 100
+    end
+
+    attr_accessor :pagesize
+
+    attr_reader :log
+    
+    def extract(feed, path, start = 0)
+        log.info "Загружаем #{feed}"
+        
+        # userpic
+        userpic = extract_userpic(feed)
+        File.write File.join(path, 'images', 'userpic.jpg'), userpic
+
+        # extract entries
+        s = start
+        
+        while true
+            page = extract_feed(feed, :start => s, :num => pagesize)
+            
+            break if page['entries'].empty?
+            
+            prev_last_entry, last_entry = nil
+            
+            page['entries'].each do |e|
+                last_entry = process_entry(e)
+                entry_path = File.join(path, 'data', 'entries', "#{last_entry['name']}.js")
+                File.write(entry_path, last_entry.to_json)
+            end
+            
+            log.info "Загружено %i записей, начиная с %i; дата самой старой — '%s'" % [page['entries'].size, s, last_entry['dateFriendly']]
+            
+            s += pagesize
+            if prev_last_entry == last_entry
+                log.warn "Страница повторилась. Вероятно, наткнулись на ограничение FriendFeed. Останавливаемся."
+                break
+            end
+
+            prev_last_entry = last_entry
+        end
+
+        true
+
+    rescue RuntimeError => e
+        case e.message
+        when /Net::HTTPForbidden/
+            log.error "Доступ запрещён: #{e.message.scan(%r{http://\S+}).flatten.first}"
+        else
+            log.error "Ошибка: #{e.message}"
+        end
+        false
     end
     
-    def feed(name, params)
+    def self.extract_feed(user, key, feedname, path, start = 0)
+        frf = new(user, key)
+        frf.extract(feedname, path, start)
+    end
+
+    private
+
+    def extract_feed(name, params)
         request("feed/#{name}", params)
     end
     
-    def userpic(user, size='large')
+    def extract_userpic(user, size='large')
         raw_request("picture/#{user}", 'size' => size)
     end
 
@@ -36,50 +95,34 @@ class FriendFeedClient
         
         # somehow internal SimpleHttp's redirection following fails
         http.register_response_handler(Net::HTTPRedirection){|request, response, shttp| 
-	 		SimpleHttp.get response['location'] 
-	 	}
+            SimpleHttp.get response['location'] 
+        }
         http.get
     end
 
     def construct_url(method, params)
-        #"/v2/#{method}?" + params.map{|k, v| "#{k}=#{v}"}.join('&')
         "http://friendfeed-api.com/v2/#{method}?" + params.map{|k, v| "#{k}=#{v}"}.join('&')
     end
-    
-    def self.extract_feed(user, key, feedname, path, start = 0)
-        frf = new(user, key)
-        
-        # extract userpic
-        userpic = frf.userpic(user)
-        File.write File.join(path, 'images', 'userpic.jpg'), userpic
-        
-        # extract entries
-        s = start
-        page = 100
-        while true
-            data = frf.feed(feedname, :start => s, :num => page)
-            break if data['entries'].empty?
-            
-            le = nil
-            data['entries'].each do |e|
-                ename = e['url'].gsub("http://friendfeed.com/#{user}/", '').gsub("/", '__')
-                name = File.join(path, 'data', 'entries', ename + ".js")
-                e['name'] = ename
-                e['dateFriendly'] = parse_time(e['date']).strftime('%d %B %Y в %H:%M')
-                (e['comments'] || []).each{|c| c['dateFriendly'] = parse_time(c['date']).strftime('%d %B %Y в %H:%M')}
-                (e['likes'] || []).each{|c| c['dateFriendly'] = parse_time(c['date']).strftime('%d %B %Y в %H:%M')}
-                e['likes'] && e['likes'] = e['likes'].sort_by{|l| l['date']}.reverse
-                File.write(name, e.to_json)
-                le = e
-            end
-            puts "Loaded %i entries, starting from %i" % [page, s]
-            puts le['dateFriendly']
-            
-            s += page
-            if s > 10_000
-                puts "10k entries limitation. That's all."
-                break
-            end
-        end
+
+    def make_friendly_date(t)
+        parse_time(t).strftime('%d %B %Y в %H:%M')
     end
+
+    def process_entry(raw)
+        raw.merge(
+            'name' => raw['url'].gsub(%r{http://friendfeed\.com/[^/]+/}, '').gsub("/", '__'),
+            'dateFriendly' => make_friendly_date(raw['date']),
+            'comments' => (raw['comments'] || []).map{|comment|
+                    comment.merge(
+                        'dateFriendly' => make_friendly_date(comment['date'])
+                    )
+                },
+            'likes' => (raw['likes'] || []).map{|like|
+                    like.merge(
+                        'dateFriendly' => make_friendly_date(like['date'])
+                    )
+                }.sort_by{|l| l['date']}.reverse
+        )
+    end
+    
 end
