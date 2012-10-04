@@ -20,7 +20,6 @@ puts "Clio — better Friendfeed backup tool.  by zverok and contributors"
 puts "=================================================================\n\n"
 
 user, key, feed, * = *ARGV
-feed ||= user
 
 opts = Slop.parse(:help => true){
     on :u, :user=, "Ваш юзернейм"
@@ -32,18 +31,48 @@ opts = Slop.parse(:help => true){
     on :i, :indexonly, "Только проиндексировать (данные уже загружены)"
 }
 
-unless opts[:user] || opts[:feed]
-    exit(0)
+if opts[:user]
+    user = opts[:user]
 end
 
-feeds = (opts[:feeds] || user).split(/\s*,\s*/)
+if opts[:key]
+    key = opts[:key]
+end
+
+if opts[:feeds]
+    feeds = opts[:feeds]
+end
+
+if user && user[0,1] == "-"
+    # if "user" starts with "-" that's probably option-parsing artifact and we should ignore it
+    user = nil
+end
+
+unless feeds
+    feeds = user
+end
+
+unless feeds
+    puts opts
+    $stderr.puts "\nERROR: Непонятно что скачивать. Укажите параметр --feeds или --user"
+    exit(1)
+end
+
+unless opts[:indexonly] || (user && key)
+    # we can't work without user+key
+    puts opts
+    $stderr.puts "\nERROR: Необходимо указать либо опции --user и --key, либо --indexonly"
+    exit(1)
+end
+
+feeds = feeds.split(/\s*,\s*/)
 
 logger = Logger.new(opts[:log] ? opts[:log] : STDOUT).tap{|l|
     l.formatter = PrettyFormatter.new
 }
 
 unless opts.indexonly?
-    client = FriendFeedClient.new(opts[:user], opts[:key], logger)
+    client = FriendFeedClient.new(user, key, logger)
 end
 
 result_path = opts[:path] || File.join(base_path, 'result')
