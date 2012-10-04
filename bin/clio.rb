@@ -15,6 +15,10 @@ require 'log_utils'
 require 'frf_client'
 require 'indexator'
 
+
+puts "Clio — better Friendfeed backup tool.  by zverok and contributors"
+puts "=================================================================\n\n"
+
 user, key, feed, * = *ARGV
 feed ||= user
 
