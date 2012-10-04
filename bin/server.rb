@@ -26,18 +26,18 @@ unless File.exists? "%s/index.html" % document_root
 end
 
 server = HTTPServer.new({
-	:Port			=> port,
-	:Logger			=> Log.new($stderr, Log::FATAL),
-	:AccessLog		=> [[
-		File.open(RUBY_PLATFORM =~ /mswin/ ? 'NUL:' : '/dev/null', 'w'),
-		AccessLog::COMBINED_LOG_FORMAT
-	]],
-	:DocumentRoot	=> document_root,
+    :Port            => port,
+    :Logger          => Log.new($stderr, Log::FATAL),
+    :AccessLog       => [[
+        File.open(RUBY_PLATFORM =~ /mswin/ ? 'NUL:' : '/dev/null', 'w'),
+        AccessLog::COMBINED_LOG_FORMAT
+    ]],
+    :DocumentRoot    => document_root,
 })
 
 # trap signals to invoke the shutdown procedure cleanly
 ['INT', 'TERM'].each { |signal|
-   trap(signal){ server.shutdown} 
+    trap(signal){ server.shutdown} 
 }
 
 puts "Serving FriendFeed archive of %s on http://localhost:%d/index.html" % [feed, port]
