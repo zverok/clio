@@ -17,6 +17,14 @@ end
 port = 0xfeed
 base_path = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
+feed = ARGV.shift
+document_root = File.join(base_path, 'result', feed)
+
+unless File.exists? "%s/index.html" % document_root
+    $stderr.puts "Can't find archive of %s feed" % feed
+    exit(1)
+end
+
 server = HTTPServer.new({
 	:Port			=> port,
 	:Logger			=> Log.new($stderr, Log::FATAL),
@@ -24,7 +32,7 @@ server = HTTPServer.new({
 		File.open(RUBY_PLATFORM =~ /mswin/ ? 'NUL:' : '/dev/null', 'w'),
 		AccessLog::COMBINED_LOG_FORMAT
 	]],
-	:DocumentRoot	=> File.join(base_path, 'result', ARGV.shift),
+	:DocumentRoot	=> document_root,
 })
 
 # trap signals to invoke the shutdown procedure cleanly
