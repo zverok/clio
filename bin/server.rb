@@ -1,7 +1,18 @@
+#!/usr/bin/env ruby
+
 require 'webrick'
 include WEBrick
 
 require 'fileutils'
+
+
+puts "Clio Server.  by zverok and contributors"
+puts "=========================================\n\n"
+
+if ARGV.length < 1
+    $stderr.puts "Usage: server.rb feedname"
+    exit(1)
+end
 
 port = 0xfeed
 base_path = File.expand_path(File.join(File.dirname(__FILE__), '..'))
