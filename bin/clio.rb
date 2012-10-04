@@ -88,15 +88,15 @@ feeds.each do |feed|
         path = File.join(path, Time.now.strftime('%Y-%m-%d'))
     end
 
-    if opts.indexonly?
-        Indexator.new(base_path, path, logger).run
-    else
+    unless opts.indexonly?
         if client.extract(feed, path)
             puts "\n#{feed} загружен, запускаем индексатор #{path}\n\n"
-            Indexator.new(base_path, path, logger).run
-            puts "\n#{feed} загружен и проиндексирован, см. file://#{path}/index.html"
         else
             puts "\nЗагрузка #{feed} не удалась, смотрите логи"
+            next
         end
     end
+
+    Indexator.new(base_path, path, logger).run
+    puts "\n#{feed} проиндексирован, см. file://#{path}/index.html"
 end
