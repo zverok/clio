@@ -40,6 +40,6 @@ server = HTTPServer.new({
    trap(signal){ server.shutdown} 
 }
 
-puts "Serving your FriendFeed archive on http://localhost:%d/index.html" % port
+puts "Serving FriendFeed archive of %s on http://localhost:%d/index.html" % [feed, port]
 
 server.start
