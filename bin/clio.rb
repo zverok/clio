@@ -78,7 +78,7 @@ end
 result_path = opts[:path] || File.join(base_path, 'result')
 
 trap("INT"){
-    puts "Прервано пользователем"
+    $stderr.puts "Прервано пользователем"
     exit(1)
 }
 
@@ -92,7 +92,7 @@ feeds.each do |feed|
         if client.extract(feed, path)
             puts "\n#{feed} загружен, запускаем индексатор #{path}\n\n"
         else
-            puts "\nЗагрузка #{feed} не удалась, смотрите логи"
+            $stderr.puts "\nЗагрузка #{feed} не удалась, смотрите логи"
             next
         end
     end
