@@ -149,14 +149,12 @@ Clio = {
 }
 
 $(document).ready(function(){
-    if(document.URL.indexOf('index.html') != -1){
-        Clio.showMain($.query.get('page'));
-    }else if(document.URL.indexOf('list.html') != -1){
-
+    if(document.URL.indexOf('list.html') != -1){
         Clio.showIndexEntry($.query.get('index'), $.query.get('term'), $.query.get('page'));
-        
     }else if(document.URL.indexOf('entry.html') != -1){
         Clio.showEntry($.query.get('id'));
+    }else {
+        Clio.showMain($.query.get('page'));
     }
     
     Clio.setupEvents()
