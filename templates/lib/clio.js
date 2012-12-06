@@ -1,6 +1,5 @@
 Clio = {
     dataURL: function(){return window.location.pathname.replace(/[^\/]+$/, '') + 'data/'},
-        //return document.URL.replace(/[^\/]+$/, '') + 'data/'},
 
     indexesURL: function(){return Clio.dataURL() + 'indexes/';},
     entriesURL: function(){return Clio.dataURL() + 'entries/';},
@@ -11,6 +10,7 @@ Clio = {
             Clio.showList(row.entries, page);
         });
         Clio.showSidebar();
+        Clio.setupEvents();
     },
     
     showIndexEntry: function(index, trm, page){
@@ -38,6 +38,8 @@ Clio = {
             // если в имени индекса есть "__", то он и является вторичным индексом, который надо сейчас отобразить
             var subindex = index.indexOf('__') > -1 ? index : row.subindex 
             Clio.showSidebar(index, trm, subindex);
+
+            Clio.setupEvents()
         });
         
     },
@@ -79,6 +81,7 @@ Clio = {
         });
         
         Clio.showSidebar();
+        Clio.setupEvents();
     },
     
     showSidebar: function(indexdescr, term, subindex){
@@ -147,18 +150,3 @@ Clio = {
     }
     
 }
-
-$(document).ready(function(){
-    if(document.URL.indexOf('index.html') != -1){
-        Clio.showMain($.query.get('page'));
-    }else if(document.URL.indexOf('list.html') != -1){
-
-        Clio.showIndexEntry($.query.get('index'), $.query.get('term'), $.query.get('page'));
-        
-    }else if(document.URL.indexOf('entry.html') != -1){
-        Clio.showEntry($.query.get('id'));
-    }
-    
-    Clio.setupEvents()
-});
-
