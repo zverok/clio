@@ -31,6 +31,7 @@ opts = Slop.parse(:help => true){
     on :d, :dates, "Флаг для добавления текущей даты в имя папки: <path>/<feed>/<YYYY-MM-DD> (для бакапов по расписанию)"
     on :i, :indexonly, "Только проиндексировать (данные уже загружены)"
     on :depth=, "Глубина загрузки (количество новых записей); по умолчанию — максимально возможное"
+    on :zip, "Упаковать в архив <path>/<feed>-<YYYY-MM-DD>.zip"
 }
 
 if opts[:user]
@@ -101,4 +102,11 @@ feeds.each do |feed|
 
     Indexator.new(base_path, path, logger).run
     puts "\n#{feed} проиндексирован, см. file://#{path}/index.html"
+
+    if opts.zip?
+        require 'archive/zip'
+        zip_path = File.join(result_path, "#{feed}-#{Time.now.strftime('%Y-%m-%d')}.zip")
+        Archive::Zip.archive(zip_path, path)
+        puts "\n#{feed} упакован в #{zip_path}"
+    end
 end
