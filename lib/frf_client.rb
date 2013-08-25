@@ -22,7 +22,7 @@ class FriendFeedClient
 
     attr_reader :log
     
-    def extract(feed, path, start = 0)
+    def extract(feed, path, options = {})
         log.info "Загружаем #{feed}"
         
         # userpic
@@ -30,10 +30,12 @@ class FriendFeedClient
         File.write File.join(path, 'images', 'userpic.jpg'), userpic
 
         # extract entries
-        s = start
+        start = options.delete(:start) || 0
+        loaded = 0
+        max = options.delete(:max_depth)
         
         while true
-            page = extract_feed(feed, :start => s, :num => pagesize)
+            page = extract_feed(feed, :start => start, :num => pagesize)
             
             break if page['entries'].empty?
             
@@ -45,9 +47,16 @@ class FriendFeedClient
                 File.write(entry_path, last_entry.to_json)
             end
             
-            log.info "Загружено %i записей, начиная с %i; дата самой старой — '%s'" % [page['entries'].size, s, last_entry['dateFriendly']]
+            log.info "Загружено %i записей, начиная с %i; дата самой старой — '%s'" % [page['entries'].size, start, last_entry['dateFriendly']]
             
-            s += pagesize
+            start += pagesize
+            loaded += pagesize
+            
+            if max && !max.zero? && loaded >= max
+                log.info "Загружено заданное количество записей (#{max}). Останавливаемся."
+                break
+            end
+            
             if prev_last_entry == last_entry
                 log.warn "Страница повторилась. Вероятно, наткнулись на ограничение FriendFeed. Останавливаемся."
                 break

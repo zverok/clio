@@ -30,6 +30,7 @@ opts = Slop.parse(:help => true){
     on :l, :log=, "Путь для записи логов (по умолчанию STDOUT)"
     on :d, :dates, "Флаг для добавления текущей даты в имя папки: <path>/<feed>/<YYYY-MM-DD> (для бакапов по расписанию)"
     on :i, :indexonly, "Только проиндексировать (данные уже загружены)"
+    on :depth=, "Глубина загрузки (количество новых записей); по умолчанию — максимально возможное"
 }
 
 if opts[:user]
@@ -90,7 +91,7 @@ feeds.each do |feed|
     end
 
     unless opts.indexonly?
-        if client.extract(feed, path)
+        if client.extract(feed, path, :max_depth => opts[:depth].to_i)
             puts "\n#{feed} загружен, запускаем индексатор #{path}\n\n"
         else
             $stderr.puts "\nЗагрузка #{feed} не удалась, смотрите логи"
