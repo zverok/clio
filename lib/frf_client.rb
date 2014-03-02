@@ -121,7 +121,7 @@ class FriendFeedClient
 
     def process_entry(raw)
         raw.merge(
-            'name' => raw['url'].gsub(%r{http://friendfeed\.com/[^/]+/}, '').gsub("/", '__'),
+            'name' => raw['url'].gsub(%r{http://friendfeed\.com/[^/]+/}, '').gsub(%r{/[^/]+}, ''),
             'dateFriendly' => make_friendly_date(raw['date']),
             'comments' => (raw['comments'] || []).map{|comment|
                     comment.merge(
