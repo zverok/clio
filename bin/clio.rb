@@ -85,28 +85,32 @@ trap("INT"){
     exit(1)
 }
 
-feeds.each do |feed|
-    path = File.join(result_path, feed)
-    if opts.dates?
-        path = File.join(path, Time.now.strftime('%Y-%m-%d'))
-    end
+begin
+    feeds.each do |feed|
+        path = File.join(result_path, feed)
+        if opts.dates?
+            path = File.join(path, Time.now.strftime('%Y-%m-%d'))
+        end
 
-    unless opts.indexonly?
-        if client.extract(feed, path, :max_depth => opts[:depth].to_i)
-            puts "\n#{feed} загружен, запускаем индексатор #{path}\n\n"
-        else
-            $stderr.puts "\nЗагрузка #{feed} не удалась, смотрите логи"
-            next
+        unless opts.indexonly?
+            if client.extract(feed, path, :max_depth => opts[:depth].to_i)
+                puts "\n#{feed} загружен, запускаем индексатор #{path}\n\n"
+            else
+                $stderr.puts "\nЗагрузка #{feed} не удалась, смотрите логи"
+                next
+            end
+        end
+
+        Indexator.new(base_path, path, logger).run
+        puts "\n#{feed} проиндексирован, см. file://#{path}/index.html"
+
+        if opts.zip?
+            require 'archive/zip'
+            zip_path = File.join(result_path, "#{feed}-#{Time.now.strftime('%Y-%m-%d')}.zip")
+            Archive::Zip.archive(zip_path, path)
+            puts "\n#{feed} упакован в #{zip_path}"
         end
     end
-
-    Indexator.new(base_path, path, logger).run
-    puts "\n#{feed} проиндексирован, см. file://#{path}/index.html"
-
-    if opts.zip?
-        require 'archive/zip'
-        zip_path = File.join(result_path, "#{feed}-#{Time.now.strftime('%Y-%m-%d')}.zip")
-        Archive::Zip.archive(zip_path, path)
-        puts "\n#{feed} упакован в #{zip_path}"
-    end
+rescue => e
+    logger.error "Вылетело по ошибке: #{e.message}"
 end
