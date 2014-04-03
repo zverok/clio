@@ -1,11 +1,14 @@
 ClioTemplates = {
     feed: {
         '.l_entry': {'entry<-entries': {
-            /*'.profile a@href': 'http://friendfeed.com/#{entry.from.id}',
-            '.profile img@title': 'entry.from.name',
+            //'.profile a@href': 'http://friendfeed.com/#{entry.from.id}',
+            //'.profile img@title': 'entry.from.name',
+            //'.profile@class+': function(o){return o.item.to === undefined ? 'hidden' : ''},
+            
             '.ebody .name a': 'entry.from.name',
-            '.ebody .name a@href': 'http://friendfeed.com/#{entry.from.id}',*/
-
+            '.ebody .name a@href': 'http://friendfeed.com/#{entry.from.id}',
+            '.ebody .name@class': function(o){return o.item.to === undefined ? 'hidden' : 'name'}, // class+ somehow didn't work
+            
             /*'+.comments.middle_comments': function(o){return o.hiddenComments ? "<a>Show " + (o.item.hiddenComments.length) + " more comments</a>" : ""},
 
             '.comments.all_comments@view': function(o){console.log(o.item); return o.item.comments ? '' : 'hidden'},
