@@ -34,12 +34,12 @@ class FriendFeedClient
         loaded = 0
         max = options.delete(:max_depth)
         
+        prev_last_entry, last_entry = nil
+    
         while true
             page = extract_feed(feed, :start => start, :num => pagesize)
             
             break if page['entries'].empty?
-            
-            prev_last_entry, last_entry = nil
             
             page['entries'].each do |e|
                 last_entry = process_entry(e)
@@ -57,7 +57,7 @@ class FriendFeedClient
                 break
             end
             
-            if prev_last_entry == last_entry
+            if prev_last_entry && prev_last_entry['date'] == last_entry['date']
                 log.warn "Страница повторилась. Вероятно, наткнулись на ограничение FriendFeed. Останавливаемся."
                 break
             end
