@@ -20,8 +20,6 @@ require 'indexator'
 puts "Clio — better Friendfeed backup tool.  by zverok and contributors"
 puts "=================================================================\n\n"
 
-user, key, feed, * = *ARGV
-
 opts = Slop.parse(:help => true){
     on :u, :user=, "Ваш юзернейм"
     on :k, :key=, "Remote key для логина, берётся с http://friendfeed.com/remotekey"
@@ -33,6 +31,8 @@ opts = Slop.parse(:help => true){
     on :depth=, "Глубина загрузки (количество новых записей); по умолчанию — максимально возможное"
     on :zip, "Упаковать в архив <path>/<feed>-<YYYY-MM-DD>.zip"
 }
+
+exit if opts.help?
 
 if opts[:user]
     user = opts[:user]
