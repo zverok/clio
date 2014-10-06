@@ -2,8 +2,6 @@
 require 'json'
 require 'core_ext'
 
-require 'rutils/datetime/datetime'
-
 def parse_time(str)
     str =~ /(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)Z/
     Time.local($1, $2, $3, $4, $5, $6)
@@ -86,7 +84,7 @@ end
 
 class DateIndex < Index
     def descriptor; 'dates' end
-    def title; 'Месяцы' end
+    def title; LANG == 'en' ? 'Monthes' : 'Месяцы' end
     
     def key(entry); parse_time(entry['date']) end
     def row_descriptor(tm); tm.strftime('%Y-%m') end
@@ -101,7 +99,7 @@ end
 
 class HashtagIndex < Index
     def descriptor; 'hashtags' end
-    def title; 'Теги' end
+    def title; LANG == 'en' ? 'Tags' : 'Теги' end
     
     def key(entry)
         extract_hashtags(entry['body']) + 
@@ -157,7 +155,7 @@ class Indexator
 
     INDEXES = [DateIndex, HashtagIndex, AllIndex]
 
-    def run
+    def run(language = nil)
         log.info "Начато #{description}"
         FileUtils.makedirs @indexes_path
 
@@ -181,7 +179,11 @@ class Indexator
         log.info "#{description}: индексы сохранены, копируем шаблоны"
 
         # copy templates
-        templates_src = File.join(@base_path, 'templates')
+        templates_src = if language
+            File.join(@base_path, 'templates', language)
+        else
+            File.join(@base_path, 'templates')
+        end
         templates_dst = @path
         
         Dir[File.join(templates_src, '**', '*.*')].each do |src|

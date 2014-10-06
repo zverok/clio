@@ -85,6 +85,10 @@ trap("INT"){
     exit(1)
 }
 
+require 'rutils/datetime/datetime'
+
+LANG = 'ru'
+
 begin
     feeds.each do |feed|
         path = File.join(result_path, feed)

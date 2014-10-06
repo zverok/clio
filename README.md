@@ -1,3 +1,6 @@
+In Russian (look for English below)
+-----------------------------------
+
 Что это?
 --------
 
@@ -46,40 +49,58 @@
 Эта команда запустит сервер, на который можно будет зайти по адресу
 http://localhost:65261/index.html
 
-Как пользоваться (старый способ, вроде бы всё ещё работает)
-----------------------------------------------------------
+In English
+----------
 
-*Шаг 0*.
+What is it
+--------
 
-Распакуйте куда-нибудь содержимое архива и перейдите в эту папку.
+Backup tool for your FriendFeed.
 
-*Шаг 1*. 
+How to use it
+-------------
 
-В командной строке:
+You will need Ruby v1.9 or newer.
 
-ruby bin/load.rb (юзернейм) (remote key)
+Clone repository or download it to some folder.
 
-(remote key) — это штука, которую можно получить здесь: http://friendfeed.com/remotekey
+Then, in command line (or Terminal):
 
-Если в вашем фиде нет подзамочных записей, можно обойтись без него.
+`ruby bin/clio-en.rb -u (username) -k (remote key) -f (list of feeds to load)`
 
-*Шаг 2*.
+(remote key) can be received here: http://friendfeed.com/remotekey
 
-В командной строке:
+If you'll ommit -f, it will download your own feed.
 
-ruby bin/index.rb (юзернейм)
+Options (you can also see them with: `ruby bin/clio-en.rb -h`):
 
-Всё!
+    -u, --user           Your username
+    -k, --key            Your remote key from http://friendfeed.com/remotekey
+    -f, --feeds          Feeds to load, comma-separated: user1,group2,user3 (your own feed by default)
+    -p, --path           Path to store feeds, by default its `result`, with each feed at <path>/<feed>
+    -l, --log            Path to write logs (STDOUT by default)
+    -d, --dates          If this flag provided, adds current date to folder name: <path>/<feed>/<YYYY-MM-DD> (useful for scheduled backups)
+    -i, --indexonly      Index only (data already loaded)
+        --depth          Depth of download (how many new entries to download); maximum possible (~10'000) by default
+        --zip            Pack into archive <path>/<feed>-<YYYY-MM-DD>.zip
+    -h, --help           Display this help message.
 
-Теперь в папке result/(ваш юзернейм) есть файл index.html —  просто откройте его в браузере. (Firefox или Opera; в Chrome точно не работает, в других не проверялось). Для того, чтобы работало в Chrome, нужно запустить браузер с дополнительным параметром командной строки --allow-file-access-from-files.
+### Result
 
-Другой вариант просмотра архива в Chrome:
+That's it!
 
-*Шаг 3*.
+Now in folders like result/(feed name) you'll have index.html — just open it in browser.
 
-В командной строке:
+* It works seemlessly in Firefox.
+* To see it with Opera: check an option <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>.
+* To see it with Chrome: you should run your browser with --allow-file-access-from-files.
 
-ruby bin/server.rb (юзернейм)
+Or, you can run:
 
-Эта команда запустит сервер, на который можно будет зайти по адресу
-http://localhost:65261/index.html
+`ruby bin/server.rb (юзернейм)`
+
+And it will start simple server at http://localhost:65261/index.html, available from any browser.
+
+Or, if you'll upload everything on some server, you'll be able to see it (all browser hacks are only for "local" files).
+
+FYI, all your entries are stored in separate JSON files in your feed folder, so, if you are programmer, you can do something useful about it.

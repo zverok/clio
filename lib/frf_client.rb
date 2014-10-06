@@ -4,7 +4,6 @@ require 'base64'
 require 'fileutils'
 
 require 'json'
-require 'rutils/datetime/datetime'
 
 def parse_time(str)
     str =~ /(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)Z/
@@ -23,7 +22,13 @@ class FriendFeedClient
     attr_reader :log
     
     def extract(feed, path, options = {})
-        log.info "Загружаем #{feed}"
+        @lang = options.delete(:lang)
+        
+        if @lang == 'en'
+            log.info "Loading #{feed}"
+        else
+            log.info "Загружаем #{feed}"
+        end
         
         # userpic
         userpic = extract_userpic(feed)
@@ -47,18 +52,30 @@ class FriendFeedClient
                 File.write(entry_path, last_entry.to_json)
             end
             
-            log.info "Загружено %i записей, начиная с %i; дата самой старой — '%s'" % [page['entries'].size, start, last_entry['dateFriendly']]
+            if @lang == 'en'
+                log.info "%i entries loaded, starting with %i; oldest date is '%s'" % [page['entries'].size, start, last_entry['dateFriendly']]
+            else
+                log.info "Загружено %i записей, начиная с %i; дата самой старой — '%s'" % [page['entries'].size, start, last_entry['dateFriendly']]
+            end
             
             start += pagesize
             loaded += pagesize
             
             if max && !max.zero? && loaded >= max
-                log.info "Загружено заданное количество записей (#{max}). Останавливаемся."
+                if @lang == 'en'
+                    log.info "Maximum entry count loaded (#{max}). Stop."
+                else
+                    log.info "Загружено заданное количество записей (#{max}). Останавливаемся."
+                end
                 break
             end
             
             if prev_last_entry && prev_last_entry['date'] == last_entry['date']
-                log.warn "Страница повторилась. Вероятно, наткнулись на ограничение FriendFeed. Останавливаемся."
+                if @lang == 'en'
+                    log.warn "Pages repeating. Possibly FriendFeed limits exceeded. Stop."
+                else
+                    log.warn "Страница повторилась. Вероятно, наткнулись на ограничение FriendFeed. Останавливаемся."
+                end
                 break
             end
 
@@ -70,11 +87,23 @@ class FriendFeedClient
     rescue RuntimeError => e
         case e.message
         when /Net::HTTPForbidden/
-            log.error "Доступ запрещён: #{e.message.scan(%r{http://\S+}).flatten.first}"
+            if @lang == 'en'
+                log.error "Access forbidden: #{e.message.scan(%r{http://\S+}).flatten.first}"
+            else
+                log.error "Доступ запрещён: #{e.message.scan(%r{http://\S+}).flatten.first}"
+            end
         when /Net::HTTPUnauthorized/
-            log.error "Авторизация не удалась (проверьте юзернейм и ремоут-ключ): #{e.message.scan(%r{http://\S+}).flatten.first}"
+            if @lang == 'en'
+                log.error "Authorization fail (check username and key): #{e.message.scan(%r{http://\S+}).flatten.first}"
+            else
+                log.error "Авторизация не удалась (проверьте юзернейм и ремоут-ключ): #{e.message.scan(%r{http://\S+}).flatten.first}"
+            end
         else
-            log.error "Ошибка: #{e.message}"
+            if @lang == 'en'
+                log.error "Error: #{e.message}"
+            else
+                log.error "Ошибка: #{e.message}"
+            end
         end
         false
     end
@@ -116,7 +145,11 @@ class FriendFeedClient
     end
 
     def make_friendly_date(t)
-        parse_time(t).strftime('%d %B %Y в %H:%M')
+        if @lang == 'en'
+            parse_time(t).strftime('%B %d, %Y at %H:%M')
+        else
+            parse_time(t).strftime('%d %B %Y в %H:%M')
+        end
     end
 
     def process_entry(raw)
