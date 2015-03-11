@@ -188,13 +188,14 @@ class FriendFeedClient
 
   def extract_image(thumb, path)
 
-    [URI(thumb['url']), URI(thumb['link'])].each do |uri|
+    [URI(URI.encode(thumb['url'])), URI(URI.encode(thumb['link']))].each do |uri|
       if uri.host.include? 'm.friendfeed-media.com'
         Thread.new{
           download_image(uri, path)
         }
         thumb['url'] = "images/thumbs%s" % [uri.path]
       end
+      rescue Error
     end
 
   end
