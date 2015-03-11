@@ -1,0 +1,157 @@
+!!!
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+  %head
+    %meta{:content => "text/html; charset=utf-8", "http-equiv" => "Content-Type"}/
+    %title FriendFeed
+    %link{:href => "./css/nano-theme-helvetica.css", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => "./css/clio.css", :rel => "stylesheet", :type => "text/css"}/
+    %script{:src => "./lib/jquery.js"}
+    :javascript
+      jQuery.query = { numbers: false, hash: true };
+    %script{:src => "./lib/jquery.query.js"}
+    %script{:src => "./lib/pure.js"}
+    %script{:src => "./lib/urlencode.js"}
+    %script{:src => "./lib/clio-templates.js"}
+    %script{:src => "./lib/settings.js"}
+    %script{:src => "./lib/clio.js"}
+    :javascript
+      Clio.showMain($.query.get('page'));
+  %body
+    #bodydiv
+      #container
+        #header
+          %table
+            %tr
+              %td.logo
+                %a{:href => "./index.html"}
+                  %img{:alt => "FriendFeed", :src => "./images/nano-logo.png", :style => "width:227px;height:50px;"}/
+              %td
+        #sidebar
+          #subindex.box
+            .box-bar
+              .box-corner
+              .box-bar-text
+                %span.title
+                  %a{:href => "(страница индекса)"}
+            .subbar{:style => "display:none"}
+            .box-body
+              %ul
+                %li
+                  %a.sidebar-nav{:href => "(урл списка)"}
+            .box-bottom
+              .box-corner
+              .box-spacer
+          #grouped-indexes
+            .box
+              .box-bar
+                .box-corner
+                .box-bar-text
+                  %span.title
+                    %a{:href => "(страница индекса)"}
+              .subbar{:style => "display:none"}
+              .box-body
+                .group
+                  .group-title
+                    %a{:href => "#"}
+                  %ul.group-contents
+                    %li
+                      %a.sidebar-nav{:href => "(урл списка)"}
+              .box-bottom
+                .box-corner
+                .box-spacer
+          #plain-indexes
+            .box
+              .box-bar
+                .box-corner
+                .box-bar-text
+                  %span.title
+                    %a{:href => "(страница индекса)"}
+              .subbar{:style => "display:none"}
+              .box-body
+                %ul
+                  %li
+                    %a.sidebar-nav{:href => "(урл списка)"}
+              .box-bottom
+                .box-corner
+                .box-spacer
+        #body
+          #page.box.white
+            .box-bar.home
+              .box-corner
+              .box-bar-text
+                /
+                  <div id="realtimectl" class="control">
+                  <div class="l_realtimepause" title="Приостановить обновления"></div>
+                  </div>
+                  
+                  <div class="control">
+                  <a href="#" class="l_deliveryoptions" feedid="00000000000000000000000000000000" category="lists">E-mail / IM</a>
+                  </div>
+                #realtimestatus.control
+                %span.title
+                  %a Главная страница
+            .subbar.home{:style => "display:none"}
+            .box-body
+              #feed
+                .l_entry.entry.nopicture
+                  .body
+                    .ebody
+                      .title
+                        .name
+                          %a.l_profile{:href => "(урл юзера)"}
+                        .text
+                        .images.media
+                          %table
+                            %tr
+                              %td
+                                .container
+                                  %a{:href => "(источник)", :rel => "nofollow"}
+                                    %img.thumbnail{:src => "(картинка)", :style => "(размеры)"}/
+                    .info
+                      %a.date{:href => "(урл записи)"}
+                      %span.via
+                        с
+                        %a.service{:href => "(урл исходника)", :rel => "nofollow"}
+                    .likes
+                      %span.lbody
+                        %a.l_profile{:href => "(урл юзера)"}
+                    .comments.all_comments
+                      .comment
+                        .quote{:title => "(дата)"}
+                        .content
+                          \-
+                          %a.l_profile{:href => "(урл юзера)"}
+                    .comments.first_comments
+                      .comment
+                        .quote{:title => "(дата)"}
+                        .content
+                          \-
+                          %a.l_profile{:href => "(урл юзера)"}
+                    .comments.middle_comments.expandcomment
+                      %a.hidden_comments_stub.l_expandcomments{:href => "#"}
+                      .hidden_comments_contents
+                        .comment
+                          .quote{:title => "(дата)"}
+                          .content
+                            \-
+                            %a.l_profile{:href => "(урл юзера)"}
+                    .comments.last_comments
+                      .comment
+                        .quote{:title => "(дата)"}
+                        .content
+                          \-
+                          %a.l_profile{:href => "(урл юзера)"}
+                  .clear
+              .pager.bottom
+                #pages
+                  %a{:href => "(адрес страницы)"}
+              %div{:style => "clear:both; height:12px"}
+            .box-bottom
+              .box-corner
+              .box-spacer
+        #footer
+          ©2010 FriendFeed (and a bit of
+          = succeed "\u{2019}s" do
+            %a{:href => "http://friendfeed.com/zverok"} zverok
+    #extradiv
+    #extradivtoo

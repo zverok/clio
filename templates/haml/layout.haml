@@ -1,0 +1,35 @@
+!!!
+%html{xmlns: "http://www.w3.org/1999/xhtml"}
+  %head
+    %meta{content: "text/html; charset=utf-8", "http-equiv" => "Content-Type"}/
+    %title= yield(:title)
+    %link{href: relative("css/nano-theme-helvetica.css"), rel: "stylesheet", type: "text/css"}/
+    %link{href: relative("css/clio.css"), rel: "stylesheet", type: "text/css"}/
+    %script{src: "./lib/jquery.js"}
+    %script{src: "./lib/pure.js"}
+    %script{src: "./lib/urlencode.js"}
+    %script{src: "./lib/jquery.query.js"}
+    %script{src: "./lib/clio-templates.js"}
+    %script{src: "./lib/settings.js"}
+    %script{src: "./lib/clio.js"}
+    :javascript
+      Clio.showEntry($.query.get('id'));
+  %body
+    #bodydiv
+      #container
+        #header
+          %table
+            %tr
+              %td.logo
+                %a{href: relative("index.html")}
+                  %img{alt: "FriendFeed", src: "./images/nano-logo.png", style: "width:227px;height:50px;"}/
+              %td
+        = partial(:sidebar, indexes: sidebar_indexes)
+        #body
+          #page.box.white
+            = yield
+        #footer
+          ©2015 FriendFeed (and a bit of
+          = succeed "\u{2019}s" do
+            %a{href: "http://friendfeed.com/zverok"} zverok
+          ingenuity)

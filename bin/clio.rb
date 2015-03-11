@@ -15,6 +15,7 @@ require 'core_ext'
 require 'log_utils'
 require 'frf_client'
 require 'indexator'
+require 'dumper'
 
 
 puts "Clio — better Friendfeed backup tool.  by zverok and contributors"
@@ -28,6 +29,7 @@ opts = Slop.parse(:help => true){
     on :l, :log=, "Путь для записи логов (по умолчанию STDOUT)"
     on :d, :dates, "Флаг для добавления текущей даты в имя папки: <path>/<feed>/<YYYY-MM-DD> (для бакапов по расписанию)"
     on :i, :indexonly, "Только проиндексировать (данные уже загружены)"
+    on :dumponly, "Только сдампить данные в HTML, данные уже загружены и проиндексированы"
     on :depth=, "Глубина загрузки (количество новых записей); по умолчанию — максимально возможное"
     on :zip, "Упаковать в архив <path>/<feed>-<YYYY-MM-DD>.zip"
 }
@@ -61,7 +63,7 @@ unless feeds
     exit(1)
 end
 
-unless opts[:indexonly] || (user && key)
+unless opts.indexonly? || opts.dumponly? || (user && key)
     # we can't work without user+key
     puts opts
     $stderr.puts "\nERROR: Необходимо указать либо опции --user и --key, либо --indexonly"
@@ -74,7 +76,7 @@ logger = Logger.new(opts[:log] ? opts[:log] : STDOUT).tap{|l|
     l.formatter = PrettyFormatter.new
 }
 
-unless opts.indexonly?
+unless opts.indexonly? || opts.dumponly?
     client = FriendFeedClient.new(user, key, logger)
 end
 
@@ -96,7 +98,7 @@ begin
             path = File.join(path, Time.now.strftime('%Y-%m-%d'))
         end
 
-        unless opts.indexonly?
+        unless opts.indexonly? || opts.dumponly?
             if client.extract(feed, path, :max_depth => opts[:depth].to_i)
                 puts "\n#{feed} загружен, запускаем индексатор #{path}\n\n"
             else
@@ -105,8 +107,12 @@ begin
             end
         end
 
-        Indexator.new(base_path, path, logger).run
-        puts "\n#{feed} проиндексирован, см. file://#{path}/index.html"
+        unless opts.dumponly?
+            Indexator.new(base_path, path, logger).run
+            puts "\n#{feed} проиндексирован, см. file://#{path}/index.html"
+        end
+        
+        Dumper.new(base_path, path, logger).run
 
         if opts.zip?
             require 'archive/zip'
@@ -115,6 +121,6 @@ begin
             puts "\n#{feed} упакован в #{zip_path}"
         end
     end
-rescue => e
-    logger.error "Вылетело по ошибке: #{e.message}"
+#rescue => e
+    #logger.error "Вылетело по ошибке: #{e.message}"
 end

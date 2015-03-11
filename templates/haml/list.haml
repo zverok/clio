@@ -1,0 +1,20 @@
+- content_for(:title){title}
+
+.box-bar.home
+  .box-corner
+  .box-bar-text
+    #realtimestatus.control
+    %span.title
+      %a= title
+.subbar.home{:style => "display:none"}
+.box-body
+  #feed
+    - posts.each do |entry|
+      = partial(:entry, entry)
+  .pager.bottom
+    #pages
+      %a{:href => "(адрес страницы)"}
+  %div{:style => "clear:both; height:12px"}
+.box-bottom
+  .box-corner
+  .box-spacer

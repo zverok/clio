@@ -1,0 +1,27 @@
+#sidebar
+  - indexes.each do |index|
+    .box
+      .box-bar
+        .box-corner
+        .box-bar-text
+          %span.title
+            %a= index.meta.title
+      .subbar{:style => "display:none"}
+      .box-body
+        - if index.meta.kind == 'grouped'
+          - index.groups.each do |group|
+            .group
+              .group-title
+                %a{:href => "#"}= group.title
+              %ul.group-contents
+                - group.rows.each do |row|
+                  %li
+                    %a.sidebar-nav{:href => relative("lists/#{index.meta.descriptor}/#{row.descriptor}.html")}= row.title
+        - else
+          %ul
+            - index.rows.each do |row|
+              %li
+                %a.sidebar-nav{:href => relative("lists/#{index.meta.descriptor}/#{row.descriptor}.html")}= row.title
+      .box-bottom
+        .box-corner
+        .box-spacer

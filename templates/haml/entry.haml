@@ -1,0 +1,44 @@
+- content_for(:title){body}
+
+.box-top.default-bar
+  .box-corner
+  .box-spacer
+.box-body
+  #feed
+    .l_entry.entry.entryview.large.expandedcomments.author
+      .profile
+        %a.l_profile{:href => "http://friendfeed.com/#{from.id}"}
+          %img.picture.large{:alt => "#{from.name}", :src => "./images/userpic.jpg"}/
+      .body
+        .ebody
+          .title
+            .name
+              %a.l_profile{:href => "http://friendfeed.com/#{from.id}"}= from.name
+            .text= body
+            - unless thumbnails.empty?
+              .images.media
+                - thumbnails.each do |thumbnail|
+                  %table
+                    %tr
+                      %td
+                        .container
+                          %a{:href => thumbnail.link, :rel => "nofollow"}
+                            %img.thumbnail{:src => thumbnail.url, :style => "width:#{thumbnail.width}; height:#{thumbnail.height};"}/
+        .info
+          %a.date{href: url}= dateFriendly
+          - if via
+            %span.via
+              с
+              %a.service{:href => via.url, :rel => "nofollow"}= via.name
+        .likes
+          - likes.each do |like|
+            %span.lbody
+              %a.l_profile{href: "http://friendfeed.com/#{like.from.id}", title: like.dateFriendly}= like.from.name
+        .comments
+          - comments.each do |comment|
+            = partial(:comment, comments.first)
+      .clear
+  %div{style: "clear:both; height:12px"}
+.box-bottom
+  .box-corner
+  .box-spacer

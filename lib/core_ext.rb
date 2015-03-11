@@ -80,6 +80,12 @@ module Enumerable
     def reverse_uniq_by
         self.reverse_uniq_with{|i1, i2| yield(i1) == yield(i2)}
     end
+
+    def each_with_progress
+        require 'progress_bar'
+        p = ProgressBar.new(count)
+        each{|o| yield(o).tap{p.increment!}}
+    end
 end
 
 class Array
