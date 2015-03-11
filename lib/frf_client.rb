@@ -195,7 +195,6 @@ class FriendFeedClient
         }
         thumb['url'] = "images/thumbs%s" % [uri.path]
       end
-      rescue Error
     end
 
   end
