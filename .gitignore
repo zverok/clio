@@ -1,3 +1,6 @@
 result
 stuff
 release
+vendor
+Gemfile.lock
+.bundle
