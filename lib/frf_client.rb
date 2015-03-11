@@ -60,7 +60,7 @@ class FriendFeedClient
         if json_entry["thumbnails"]
           json_entry["thumbnails"].each{ |thumb|
             extract_image(thumb, path);
-            puts thumb
+            # puts thumb
           }
         end
 
