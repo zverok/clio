@@ -31,6 +31,7 @@ opts = Slop.parse(:help => true){
   on :i, :indexonly, "Index only (data already loaded)"
   on :depth=, "Depth of download (how many new entries to download); maximum possible (~10'000) by default"
   on :zip, "Pack into archive <path>/<feed>-<YYYY-MM-DD>.zip"
+  on :I, :images, "If this flag is provided, images from friendfeed-media server will be downloaded"
 }
 
 exit if opts.help?
@@ -45,6 +46,11 @@ end
 
 if opts[:feeds]
   feeds = opts[:feeds]
+end
+
+download_images = false
+if opts[:images]
+  download_images = true
 end
 
 if user && user[0,1] == "-"
@@ -106,7 +112,7 @@ begin
 
     unless opts.indexonly?
 
-      if client.extract(feed, path, :max_depth => opts[:depth].to_i, lang: 'en')
+      if client.extract(feed, path, :max_depth => opts[:depth].to_i, lang: 'en', images: download_images)
         puts "\n#{feed} loaded successfully, starting to index at #{path}\n\n"
       else
         $stderr.puts "\nLoading of #{feed} unsuccessful, please see logs"

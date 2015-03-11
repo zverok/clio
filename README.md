@@ -1,57 +1,3 @@
-In Russian (look for English below)
------------------------------------
-
-Что это?
---------
-
-Бакапилка вашего френдфида.
-
-Как пользоваться (новый способ!)
---------------------------------
-
-Распакуйте куда-нибудь содержимое архива и перейдите в эту папку.
-
-В командной строке:
-
-`ruby bin/clio.rb -u (юзернейм) -k (remote key) -f (список фидов для загрузки)`
-
-(remote key) — это штука, которую можно получить здесь: http://friendfeed.com/remotekey
-
-Если не указать -f, будет загружаться ваш собственный фид.
-
-Опции (можно посмотреть в справке: `ruby bin/clio.rb -h`):
-
-    -u, --user           Ваш юзернейм
-    -k, --key            Remote key для логина, берётся с http://friendfeed.com/remotekey
-    -f, --feeds          Фид(ы) для загрузки, список через запятую: user1,group2,user3 (по умолчанию ваш собственный фид)
-    -p, --path           Путь для сохранения фидов, по умолчанию папка result, каждый фид будет лежать в <path>/<feed>
-    -l, --log            Путь для записи логов (по умолчанию STDOUT)
-    -d, --dates          Флаг для добавления текущей даты в имя папки: <path>/<feed>/<YYYY-MM-DD> (для бакапов по расписанию)
-    -i, --indexonly      Только проиндексировать (данные уже загружены)
-        --depth          Глубина загрузки (количество новых записей); по умолчанию — максимально возможное
-        --zip            Упаковать в архив <path>/<feed>-<YYYY-MM-DD>.zip
-    -h, --help           Display this help message.
-
-### Результат.
-
-Всё!
-
-Теперь в папках result/(имя фида) есть файл index.html —  просто откройте его в браузере.
-
-* В Firefox работает без проблем.
-* Чтобы работало в Opera: поставьте галку <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>.
-* Чтобы работало в Chrome: нужно запустить браузер с дополнительным параметром командной строки --allow-file-access-from-files.
-
-Другой вариант просмотра архива в Chrome:
-
-`ruby bin/server.rb (юзернейм)`
-
-Эта команда запустит сервер, на который можно будет зайти по адресу
-http://localhost:65261/index.html
-
-In English
-----------
-
 What is it
 --------
 
@@ -83,6 +29,7 @@ Options (you can also see them with: `ruby bin/clio-en.rb -h`):
     -i, --indexonly      Index only (data already loaded)
         --depth          Depth of download (how many new entries to download); maximum possible (~10'000) by default
         --zip            Pack into archive <path>/<feed>-<YYYY-MM-DD>.zip
+    -I, --images         If this flag is provided, images from friendfeed-media server will be downloaded
     -h, --help           Display this help message.
 
 ### Result

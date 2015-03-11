@@ -56,13 +56,14 @@ class FriendFeedClient
         last_entry = process_entry(e)
 
         json_entry = JSON.parse(last_entry.to_json)
-
-        if json_entry["thumbnails"]
-          json_entry["thumbnails"].each{ |thumb|
-            extract_image(thumb, path);
-            # puts thumb
-          }
+        if options[:images]
+          if json_entry["thumbnails"]
+            json_entry["thumbnails"].each{ |thumb|
+              extract_image(thumb, path);
+            }
+          end
         end
+
 
         entry_path = File.join(path, 'data', 'entries', "#{last_entry['name']}.js")
 
@@ -189,7 +190,7 @@ class FriendFeedClient
   def extract_image(thumb, path)
 
     [URI.parse(URI.encode(thumb['url'])), URI.parse(URI.encode(thumb['link']))].each do |uri|
-      if uri.host.include? 'm.friendfeed-media.com'
+      if uri.host.include? 'friendfeed-media.com'
         Thread.new{
           download_image(uri, path)
         }
