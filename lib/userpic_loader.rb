@@ -10,8 +10,7 @@ class UserpicLoader
 
     attr_reader :feed
     
-    def run(user, key)
-        @client = FriendFeedClient.new(user, key)
+    def run
         load_users!
         extract_userpics
     end
@@ -56,7 +55,7 @@ class UserpicLoader
     end
 
     def extract_userpic(user, size='large')
-        img = @client.raw_request("picture/#{user}", 'size' => size)
+        img = Clio.client.raw_request("picture/#{user}", 'size' => size)
         File.write userpic_path(user), img
     end
 end

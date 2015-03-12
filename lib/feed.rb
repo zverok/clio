@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'frf_client'
+require 'feed_loader'
 require 'indexator'
 require 'converter'
 require 'userpic_loader'
@@ -18,11 +19,13 @@ class Feed
     def initialize(name)
         @name = name
         move_old_json!
+        @entries = []
     end
 
-    attr_reader :name
+    attr_reader :name, :entries
 
-    def load!(user, key)
+    def load!
+        FeedLoader.new(self).run
     end
 
     def index!
@@ -32,8 +35,8 @@ class Feed
         Converter.new(self).run
     end
 
-    def load_userpics!(user, key)
-        UserpicLoader.new(self).run(user, key)
+    def load_userpics!
+        UserpicLoader.new(self).run
     end
 
     def load_pictures!
@@ -41,7 +44,7 @@ class Feed
     end
 
     def result_path
-        @result_path ||= File.join(self.class.result_path, name)
+        @result_path ||= File.join(self.class.result_path, folder_name)
     end
 
     def templates_path
@@ -58,6 +61,10 @@ class Feed
 
     def json_path(subpath)
         File.join(result_path, '_json/data', subpath)
+    end
+
+    def json_path!(subpath)
+        json_path(*subpath).tap{|p| FileUtils.mkdir_p(File.dirname(p))}
     end
 
     def template_path(*subpath)
@@ -82,6 +89,17 @@ class Feed
 
     def make_filename(text)
         Russian.translit(CGI.unescape(text)).downcase.gsub(/[^-a-z0-9]/, '_')
+    end
+
+    def folder_name
+        case name
+        when %r{^filter/(\w+)}
+            "#{Clio.client.user}-#{$1}"
+        when %r{/}
+            name.gsub('/', '-')
+        else
+            name
+        end
     end
 
     def move_old_json!

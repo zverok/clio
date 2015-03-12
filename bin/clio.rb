@@ -72,7 +72,7 @@ end
 feeds = feeds.split(/\s*,\s*/)
 
 unless opts.indexonly? || opts.dumponly?
-    client = FriendFeedClient.new(user, key, logger)
+    Clio.client = FriendFeedClient.new(user, key)
 end
 
 result_path = opts[:path] || File.join(base_path, 'result')
@@ -81,8 +81,6 @@ trap("INT"){
     $stderr.puts "Прервано пользователем"
     exit(1)
 }
-
-require 'rutils/datetime/datetime'
 
 LANG = 'ru'
 
@@ -94,7 +92,8 @@ begin
     feeds.each do |feedname|
         feed = Feed.new(feedname)
         #feed.convert!
-        feed.load_pictures!
+        feed.load!
+        #feed.load_userpics!
         #path = File.join(result_path, feed)
         #if opts.dates?
             #path = File.join(path, Time.now.strftime('%Y-%m-%d'))

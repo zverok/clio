@@ -8,6 +8,8 @@ module Clio
 
         attr_accessor :options
 
+        attr_accessor :client
+
         def log
             @log ||= Logger.new(options[:log] ? options[:log] : STDOUT).tap{|l|
                 l.formatter = PrettyFormatter.new
