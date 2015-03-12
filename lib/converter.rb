@@ -62,7 +62,7 @@ class Converter
 
     def dump_indexes
         Dir[feed.json_path('indexes/*.js')].reject{|s| s =~ /(days__.+|all)\.js$/}.sort.each do |f|
-            index = load_mash(f)
+            index = feed.load_mash(f)
             rows = index.meta.kind == 'grouped' ? index.groups.map(&:rows).flatten : index.rows
 
             log.info "Превращаем в HTML списки по индексу: #{index.meta.title}"
@@ -121,7 +121,7 @@ class Converter
         log.info "Загружаем JSON для превращения в HTML"
 
         Dir[feed.json_path('entries/*.js')].each_with_progress do |f|
-            e = load_mash(f)
+            e = feed.load_mash(f)
             e.thumbnails ||= []
             e.via = nil unless e.key?(:via)
             e.to = nil unless e.key?(:to)
@@ -132,11 +132,7 @@ class Converter
 
     def load_sidebar_indexes!
         @sidebar_indexes = %w[dates hashtags].map{|iid|
-            load_mash(feed.json_path("indexes/#{iid}.js"))
+            feed.load_mash(feed.json_path("indexes/#{iid}.js"))
         }
-    end
-
-    def load_mash(path)
-        Mash.new(JSON.parse(File.read(path)))
     end
 end

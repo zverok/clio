@@ -2,6 +2,7 @@
 require 'frf_client'
 require 'indexator'
 require 'converter'
+require 'userpic_loader'
 require 'russian'
 require 'cgi'
 
@@ -10,6 +11,8 @@ class Feed
         attr_accessor :result_path
         attr_accessor :templates_path
     end
+
+    Mash = Hashie::Mash
 
     def initialize(name)
         @name = name
@@ -26,6 +29,10 @@ class Feed
 
     def convert!
         Converter.new(self).run
+    end
+
+    def load_userpics!(user, key)
+        UserpicLoader.new(self).run(user, key)
     end
 
     def result_path
@@ -62,6 +69,10 @@ class Feed
         }
 
         @templates[path]
+    end
+
+    def load_mash(path)
+        Mash.new(JSON.parse(File.read(path)))
     end
 
     def make_filename(text)

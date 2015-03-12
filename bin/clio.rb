@@ -93,7 +93,8 @@ Feed.templates_path = File.join(base_path, 'templates')
 begin
     feeds.each do |feedname|
         feed = Feed.new(feedname)
-        feed.convert!
+        #feed.convert!
+        feed.load_userpics!(user, key)
         #path = File.join(result_path, feed)
         #if opts.dates?
             #path = File.join(path, Time.now.strftime('%Y-%m-%d'))
