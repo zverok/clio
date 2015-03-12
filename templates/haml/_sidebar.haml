@@ -16,12 +16,12 @@
               %ul.group-contents
                 - group.rows.each do |row|
                   %li
-                    %a.sidebar-nav{:href => relative("lists/#{index.meta.descriptor}/#{row.descriptor}.html")}= row.title
+                    %a.sidebar-nav{:href => relative("lists/#{index.meta.descriptor}/#{to_filename(row.descriptor)}.html")}= row.title
         - else
           %ul
             - index.rows.each do |row|
               %li
-                %a.sidebar-nav{:href => relative("lists/#{index.meta.descriptor}/#{row.descriptor}.html")}= row.title
+                %a.sidebar-nav{:href => relative("lists/#{index.meta.descriptor}/#{to_filename(row.descriptor)}.html")}= row.title
       .box-bottom
         .box-corner
         .box-spacer

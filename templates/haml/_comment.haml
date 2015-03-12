@@ -3,4 +3,4 @@
   .content
     = body
     \-
-    %a.l_profile{:href => "http://friendfeed.com/#{from.id}"}= from.name
+    %a.l_profile{:href => "http://friendfeed.com/#{from.id}", title: from.id}= from.name

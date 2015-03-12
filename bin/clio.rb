@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 require 'pp'
-require 'logger'
+require 'bundler/setup'
 
 base_path = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
@@ -12,10 +12,9 @@ $:.unshift File.join(base_path, 'vendors')
 require 'slop'
 
 require 'core_ext'
-require 'log_utils'
-require 'frf_client'
-require 'indexator'
-require 'dumper'
+
+require 'clio_base'
+require 'feed'
 
 
 puts "Clio — better Friendfeed backup tool.  by zverok and contributors"
@@ -72,10 +71,6 @@ end
 
 feeds = feeds.split(/\s*,\s*/)
 
-logger = Logger.new(opts[:log] ? opts[:log] : STDOUT).tap{|l|
-    l.formatter = PrettyFormatter.new
-}
-
 unless opts.indexonly? || opts.dumponly?
     client = FriendFeedClient.new(user, key, logger)
 end
@@ -91,35 +86,41 @@ require 'rutils/datetime/datetime'
 
 LANG = 'ru'
 
+Clio.options = opts
+Feed.result_path = result_path
+Feed.templates_path = File.join(base_path, 'templates')
+
 begin
-    feeds.each do |feed|
-        path = File.join(result_path, feed)
-        if opts.dates?
-            path = File.join(path, Time.now.strftime('%Y-%m-%d'))
-        end
+    feeds.each do |feedname|
+        feed = Feed.new(feedname)
+        feed.convert!
+        #path = File.join(result_path, feed)
+        #if opts.dates?
+            #path = File.join(path, Time.now.strftime('%Y-%m-%d'))
+        #end
 
-        unless opts.indexonly? || opts.dumponly?
-            if client.extract(feed, path, :max_depth => opts[:depth].to_i)
-                puts "\n#{feed} загружен, запускаем индексатор #{path}\n\n"
-            else
-                $stderr.puts "\nЗагрузка #{feed} не удалась, смотрите логи"
-                next
-            end
-        end
+        #unless opts.indexonly? || opts.dumponly?
+            #if client.extract(feed, path, :max_depth => opts[:depth].to_i)
+                #puts "\n#{feed} загружен, запускаем индексатор #{path}\n\n"
+            #else
+                #$stderr.puts "\nЗагрузка #{feed} не удалась, смотрите логи"
+                #next
+            #end
+        #end
 
-        unless opts.dumponly?
-            Indexator.new(base_path, path, logger).run
-            puts "\n#{feed} проиндексирован, см. file://#{path}/index.html"
-        end
+        #unless opts.dumponly?
+            #Indexator.new(base_path, path, logger).run
+            #puts "\n#{feed} проиндексирован, см. file://#{path}/index.html"
+        #end
         
-        Dumper.new(base_path, path, logger).run
+        #Dumper.new(base_path, path, logger).run
 
-        if opts.zip?
-            require 'archive/zip'
-            zip_path = File.join(result_path, "#{feed}-#{Time.now.strftime('%Y-%m-%d')}.zip")
-            Archive::Zip.archive(zip_path, path)
-            puts "\n#{feed} упакован в #{zip_path}"
-        end
+        #if opts.zip?
+            #require 'archive/zip'
+            #zip_path = File.join(result_path, "#{feed}-#{Time.now.strftime('%Y-%m-%d')}.zip")
+            #Archive::Zip.archive(zip_path, path)
+            #puts "\n#{feed} упакован в #{zip_path}"
+        #end
     end
 #rescue => e
     #logger.error "Вылетело по ошибке: #{e.message}"

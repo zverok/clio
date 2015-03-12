@@ -16,7 +16,7 @@
                       %a{:href => thumbnail.link, :rel => "nofollow"}
                         %img.thumbnail{:src => thumbnail.url, :style => "width:#{thumbnail.width}; height:#{thumbnail.height};"}/
     .info
-      %a.date{:href => "../../entries/#{name}.html"}= dateFriendly
+      %a.date{:href => relative("entries/#{name}.html")}= dateFriendly
       - if via
         %span.via
           с
@@ -24,7 +24,7 @@
     .likes
       - likes.each do |like|
         %span.lbody
-          %a.l_profile{href: "http://friendfeed.com/#{like.from.id}", title: like.dateFriendly}= like.from.name
+          %a.l_profile{href: "http://friendfeed.com/#{like.from.id}", title: "#{like.from.id} - #{like.dateFriendly}"}= like.from.name
     - if comments.count <= 3
       .comments.all_comments
         - comments.each do |comment|

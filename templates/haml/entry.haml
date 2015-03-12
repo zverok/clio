@@ -1,4 +1,4 @@
-- content_for(:title){body}
+- content_for(:title){title}
 
 .box-top.default-bar
   .box-corner
@@ -33,10 +33,10 @@
         .likes
           - likes.each do |like|
             %span.lbody
-              %a.l_profile{href: "http://friendfeed.com/#{like.from.id}", title: like.dateFriendly}= like.from.name
+              %a.l_profile{href: "http://friendfeed.com/#{like.from.id}", title: "#{like.from.id} - #{like.dateFriendly}"}= like.from.name
         .comments
           - comments.each do |comment|
-            = partial(:comment, comments.first)
+            = partial(:comment, comment)
       .clear
   %div{style: "clear:both; height:12px"}
 .box-bottom
