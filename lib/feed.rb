@@ -3,6 +3,7 @@ require 'frf_client'
 require 'indexator'
 require 'converter'
 require 'userpic_loader'
+require 'picture_loader'
 require 'russian'
 require 'cgi'
 
@@ -33,6 +34,10 @@ class Feed
 
     def load_userpics!(user, key)
         UserpicLoader.new(self).run(user, key)
+    end
+
+    def load_pictures!
+        PictureLoader.new(self).run
     end
 
     def result_path

@@ -11,7 +11,7 @@ class UserpicLoader
     attr_reader :feed
     
     def run(user, key)
-        @user, @key = user, key
+        @client = FriendFeedClient.new(user, key)
         load_users!
         extract_userpics
     end
@@ -56,22 +56,7 @@ class UserpicLoader
     end
 
     def extract_userpic(user, size='large')
-        img = raw_request("picture/#{user}", 'size' => size)
+        img = @client.raw_request("picture/#{user}", 'size' => size)
         File.write userpic_path(user), img
-    end
-
-    def raw_request(method, params = {})
-        http = SimpleHttp.new construct_url(method, params)
-        http.basic_authentication @user, @key
-        
-        # somehow internal SimpleHttp's redirection following fails
-        http.register_response_handler(Net::HTTPRedirection){|request, response, shttp| 
-            SimpleHttp.get response['location'] 
-        }
-        http.get
-    end
-
-    def construct_url(method, params)
-        "http://friendfeed-api.com/v2/#{method}?" + params.map{|k, v| "#{k}=#{v}"}.join('&')
     end
 end

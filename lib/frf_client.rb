@@ -5,6 +5,36 @@ require 'fileutils'
 
 require 'json'
 
+class FriendFeedClient
+    def initialize(user, key)
+        @user, @key = user, key
+    end
+
+    def request(method, params = {})
+        response = JSON.parse(raw_request(method, params))
+        response['errorCode'] && raise(RuntimeError, response['errorCode']) 
+        response
+    end
+    
+    def raw_request(method, params = {})
+        http = SimpleHttp.new construct_url(method, params)
+        http.basic_authentication @user, @key
+        
+        # somehow internal SimpleHttp's redirection following fails
+        http.register_response_handler(Net::HTTPRedirection){|request, response, shttp| 
+            SimpleHttp.get response['location'] 
+        }
+        http.get
+    end
+
+    private
+    
+    def construct_url(method, params)
+        "http://friendfeed-api.com/v2/#{method}?" + params.map{|k, v| "#{k}=#{v}"}.join('&')
+    end
+end
+__END__
+
 def parse_time(str)
     str =~ /(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)Z/
     Time.local($1, $2, $3, $4, $5, $6)

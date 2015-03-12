@@ -94,7 +94,7 @@ begin
     feeds.each do |feedname|
         feed = Feed.new(feedname)
         #feed.convert!
-        feed.load_userpics!(user, key)
+        feed.load_pictures!
         #path = File.join(result_path, feed)
         #if opts.dates?
             #path = File.join(path, Time.now.strftime('%Y-%m-%d'))
