@@ -3,7 +3,7 @@ require 'simplehttp'
 require 'base64'
 require 'fileutils'
 
-require 'json'
+require_relative './simplehttp_patch'
 
 class FriendFeedClient
     def initialize(user, key)
@@ -27,16 +27,16 @@ class FriendFeedClient
             SimpleHttp.get response['location'] 
         }
         http.get
-    rescue RuntimeError => e
-        case e.message
-        when /Net::HTTPForbidden/
-            Clio.log.error "Доступ запрещён: #{e.message.scan(%r{http://\S+}).flatten.first}"
-        when /Net::HTTPUnauthorized/
-            Clio.log.error "Авторизация не удалась (проверьте юзернейм и ремоут-ключ): #{e.message.scan(%r{http://\S+}).flatten.first}"
-        else
-            Clio.log.error "Ошибка: #{e.message}"
-        end
-        raise
+    #rescue RuntimeError => e
+        #case e.message
+        #when /Net::HTTPForbidden/
+            #Clio.log.error "Доступ запрещён: #{e.message.scan(%r{http://\S+}).flatten.first}"
+        #when /Net::HTTPUnauthorized/
+            #Clio.log.error "Авторизация не удалась (проверьте юзернейм и ремоут-ключ): #{e.message.scan(%r{http://\S+}).flatten.first}"
+        #else
+            #Clio.log.error "Ошибка: #{e.message}"
+        #end
+        #raise
     end
 
     private

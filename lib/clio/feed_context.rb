@@ -2,6 +2,7 @@
 require 'russian'
 require 'cgi'
 require 'hashie'
+require 'json'
 
 require_relative './component'
 

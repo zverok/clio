@@ -5,7 +5,8 @@ class FeedExtractor < Component
     def run(options = {})
         log.info "Загружаем метаинформацию #{context.feed_name}"
 
-        File.write(feed.json_path!("feedinfo.js"), Clio.client.request("feedinfo/#{context.feed_name}"))
+        File.write(context.json_path!("feedinfo.js"),
+            client.request("feedinfo/#{context.feed_name}"))
         
         log.info "Загружаем записи #{context.feed_name}"
         

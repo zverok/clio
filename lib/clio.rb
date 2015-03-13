@@ -7,6 +7,17 @@ require_relative './clio/frf_client'
 require_relative './clio/feed_context'
 
 class Clio
+    def self.valid?(user, key)
+        FriendFeedClient.new(user, key).request('validate')
+        true
+    rescue RuntimeError => e
+        if e.message.include?('Net::HTTPUnauthorized')
+            false
+        else
+            raise
+        end
+    end
+    
     def initialize(options)
         @options = options.dup
         @client = make_client if need_client?
@@ -46,6 +57,14 @@ class Clio
         end
     end
 
+    def feed_info(feed_name = nil)
+        client.request("feedinfo/#{feed_name || user}")
+    end
+
+    def user
+        options[:user]
+    end
+
     private
 
     def need_client?
@@ -64,6 +83,6 @@ class Clio
         options[:user] && options[:key] or
             fail ("Не указан пользователь или ключ (опции --user и --key)")
             
-        Clio::FriendFeedClient.new(options.fetch(:user), options.fetch(:key))
+        FriendFeedClient.new(options.fetch(:user), options.fetch(:key))
     end
 end

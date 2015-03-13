@@ -3,6 +3,7 @@ class UserpicExtractor < Component
     def run
         load_users!
         extract_userpics
+        copy_userpics
     end
 
     private
@@ -26,6 +27,15 @@ class UserpicExtractor < Component
             to_extract.each_with_progress do |u|
                 extract_userpic(u)
             end
+        end
+    end
+
+    def copy_userpics
+        context.path!('images/userpics/')
+        
+        log.info "Копирование юзерпиков в папку пользователя"
+        @users.each do |u|
+            FileUtils.cp userpic_path(u), context.path('images/userpics/')
         end
     end
 
