@@ -1,19 +1,13 @@
 # encoding: utf-8
-class FeedLoader
-    def initialize(feed)
-        @feed = feed
-    end
-
-    attr_reader :feed
-
+class FeedExtractor < Component
     PAGE_SIZE = 100
 
     def run(options = {})
-        log.info "Загружаем метаинформацию #{feed.name}"
+        log.info "Загружаем метаинформацию #{context.feed_name}"
 
-        File.write(feed.json_path!("feedinfo.js"), Clio.client.request("feedinfo/#{feed.name}"))
+        File.write(feed.json_path!("feedinfo.js"), Clio.client.request("feedinfo/#{context.feed_name}"))
         
-        log.info "Загружаем записи #{feed.name}"
+        log.info "Загружаем записи #{context.feed_name}"
         
         start = options.fetch(:start, 0)
         max = options.fetch(:max_depth, 0)
@@ -32,12 +26,8 @@ class FeedLoader
 
     private
 
-    def log
-        Clio.log
-    end
-
     def next_page(start)
-        page = extract_feed(feed, start: start, num: PAGE_SIZE)
+        page = extract_feed(start: start, num: PAGE_SIZE)
         
         if page['entries'].empty?
             log.info "Всё загружено, ура!"
@@ -62,18 +52,14 @@ class FeedLoader
         @prev_oldest = entries.last['date']
         true
     end
-    
-    def self.extract_feed(user, key, feedname, path, start = 0)
-        frf = new(user, key)
-        frf.extract(feedname, path, start)
-    end
 
     private
 
-    def extract_feed(name, params)
-        Clio.client.request("feed/#{feed.name}", params)
+    def extract_feed(params)
+        client.request("feed/#{context.feed_name}", params)
     end
 
+    # FIXME: вообще-то Time.parse должно хватать
     def parse_time(str)
         str =~ /(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)Z/
         Time.local($1, $2, $3, $4, $5, $6)

@@ -1,36 +1,17 @@
 # encoding: utf-8
 require 'haml'
-require 'hashie'
 
 require_relative './haml_helpers'
 
-class Converter
-    Mash = Hashie::Mash
+class Converter < Component
     PAGE_SIZE = 30
 
-    def initialize(feed)
-        @feed = feed
-        @entries = {}
-        
-        #@base_path, @path = base_path, path
-        #@indexes_path = File.join(path, 'data', 'indexes')
-        #@entries_path = File.join(path, 'data', 'entries')
-        #@templates_path = File.join(base_path, 'templates', 'haml')
-        #Clio.haml_templates_path = @templates_path # FIXME very much!
-        #@html_path = File.join(path, 'html')
-
-        #@log = logger || SilenceLogger.new
-
-        #@layout = Haml::Engine.new(File.read("#{@templates_path}/layout.haml"))
-
-        load_entries!
-        load_sidebar_indexes!
-        
-    end
-
-    attr_reader :feed, :entries
+    attr_reader :entries
 
     def run
+        load_entries!
+        load_sidebar_indexes!
+
         copy_static
 
         dump_entries
@@ -42,13 +23,9 @@ class Converter
 
     private
 
-    def log
-        Clio.log
-    end
-
     def copy_static
         %w[css js images].each do |f|
-            FileUtils.cp_r feed.template_path("haml/#{f}"), feed.result_path
+            FileUtils.cp_r context.template_path("haml/#{f}"), context.result_path
         end
     end
 
@@ -61,9 +38,10 @@ class Converter
     end
 
     def dump_indexes
-        Dir[feed.json_path('indexes/*.js')].reject{|s| s =~ /(days__.+|all)\.js$/}.sort.each do |f|
-            index = feed.load_mash(f)
-            rows = index.meta.kind == 'grouped' ? index.groups.map(&:rows).flatten : index.rows
+        # индексы по дням в HTML не превращаем. баловство это!
+        Dir[context.json_path('indexes/*.js')].reject{|s| s =~ /(days__.+|all)\.js$/}.sort.each do |f|
+            index = context.load_mash(f)
+            rows = index.meta.kind == 'grouped' ? index.groups.map(&:rows).flatten(1) : index.rows
 
             log.info "Превращаем в HTML списки по индексу: #{index.meta.title}"
             
@@ -74,7 +52,7 @@ class Converter
 
                 render_page(
                     'list',
-                    "lists/#{index.meta.descriptor}/#{feed.make_filename(row.descriptor)}.html",
+                    "lists/#{index.meta.descriptor}/#{context.make_filename(row.descriptor)}.html",
                     row.merge(
                         index: index,
                         title: "#{index.meta.title}: #{row.title}"
@@ -105,23 +83,24 @@ class Converter
     end
 
     def render_page(template_path, path, data)
-        helpers = Helpers.new(feed, path)
+        helpers = Helpers.new(context, path)
         data = Mash.new(data).merge(sidebar_indexes: @sidebar_indexes)
 
-        body = feed.haml(template_path).render(helpers, data)
-        html = feed.haml('layout').render(helpers, data){|region|
+        body = context.haml(template_path).render(helpers, data)
+        html = context.haml('layout').render(helpers, data){|region|
             region ? helpers[region] : body
         }
 
-        File.write(feed.path!(path), html)
+        File.write(context.path!(path), html)
     end
 
 
     def load_entries!
-        log.info "Загружаем JSON для превращения в HTML"
+        @entries = {}
 
-        Dir[feed.json_path('entries/*.js')].each_with_progress do |f|
-            e = feed.load_mash(f)
+        log.info "Подготавливаем JSON к превращению в HTML"
+
+        context.entries.each_with_progress do |e|
             e.thumbnails ||= []
             e.via = nil unless e.key?(:via)
             e.to = nil unless e.key?(:to)
@@ -132,7 +111,7 @@ class Converter
 
     def load_sidebar_indexes!
         @sidebar_indexes = %w[dates hashtags].map{|iid|
-            feed.load_mash(feed.json_path("indexes/#{iid}.js"))
+            context.load_mash(context.json_path("indexes/#{iid}.js"))
         }
     end
 end

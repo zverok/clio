@@ -1,10 +1,12 @@
 # encoding: utf-8
 class Helpers
-  def initialize(feed, path)
-    @feed = feed
+  def initialize(context, path)
+    @context = context
     @depth = path.scan('/').count
     @regions_hash={}
   end
+
+  attr_reader :context
 
   def content_for(region, &blk)  
     @regions_hash[region] = blk.call
@@ -15,11 +17,11 @@ class Helpers
   end
 
   def partial(template, options = {})
-    @feed.haml("_#{template}").render(self, Hashie::Mash.new(options))
+    context.haml("_#{template}").render(self, Mash.new(options))
   end
 
   def to_filename(text)
-    @feed.make_filename(text)
+    context.make_filename(text)
   end
 
   def [](region)

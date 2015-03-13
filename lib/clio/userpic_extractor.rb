@@ -1,15 +1,5 @@
 # encoding: utf-8
-class UserpicLoader
-    def self.cache_path
-        @cache_path ||= File.join(Feed.result_path, 'userpics').tap{|p| FileUtils.mkdir_p p}
-    end
-    
-    def initialize(feed)
-        @feed = feed
-    end
-
-    attr_reader :feed
-    
+class UserpicExtractor < Component
     def run
         load_users!
         extract_userpics
@@ -19,14 +9,11 @@ class UserpicLoader
 
     def load_users!
         log.info "Загружаем имена пользователей"
-        @users = []
 
-        Dir[feed.json_path('entries/*.js')].each_with_progress do |f|
-            e = feed.load_mash(f)
-            uids = [e, *e.likes, *e.comments].map(&:from).map(&:id)
-            @users.push(*uids)
-        end
-        @users = @users.uniq.sort
+        @users = context.entries.map{|e|
+            [e, *e.likes, *e.comments].map(&:from).map(&:id)
+        }.flatten.uniq.sort
+
         log.info "Загружено #{@users.count} пользователей"
     end
 
@@ -43,11 +30,7 @@ class UserpicLoader
     end
 
     def cache_path
-        self.class.cache_path
-    end
-
-    def log
-        Clio.log
+        @cache_path ||= File.join(context.clio.result_path, 'userpics').tap{|p| FileUtils.mkdir_p p}
     end
 
     def userpic_path(user)
@@ -55,7 +38,7 @@ class UserpicLoader
     end
 
     def extract_userpic(user, size='large')
-        img = Clio.client.raw_request("picture/#{user}", 'size' => size)
+        img = client.raw_request("picture/#{user}", 'size' => size)
         File.write userpic_path(user), img
     end
 end
