@@ -3,6 +3,7 @@
 
 require 'pp'
 require 'logger'
+require 'fileutils'
 
 base_path = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
