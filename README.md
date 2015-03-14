@@ -30,6 +30,7 @@ In Russian (look for English below)
     -i, --indexonly      Только проиндексировать (данные уже загружены)
         --depth          Глубина загрузки (количество новых записей); по умолчанию — максимально возможное
         --zip            Упаковать в архив <path>/<feed>-<YYYY-MM-DD>.zip
+    -I, --images         Флаг для загружать изображения с сервера на friendfeed-media
     -h, --help           Display this help message.
 
 ### Результат.
@@ -83,6 +84,7 @@ Options (you can also see them with: `ruby bin/clio-en.rb -h`):
     -i, --indexonly      Index only (data already loaded)
         --depth          Depth of download (how many new entries to download); maximum possible (~10'000) by default
         --zip            Pack into archive <path>/<feed>-<YYYY-MM-DD>.zip
+    -I, --images         If this flag is provided, images from friendfeed-media server will be downloaded
     -h, --help           Display this help message.
 
 ### Result
