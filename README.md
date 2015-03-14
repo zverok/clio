@@ -58,8 +58,6 @@ What is it
 
 Backup tool for your FriendFeed.
 
-    -h, --help           Display this help message.
-
 How to use it
 -------------
 
