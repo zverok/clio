@@ -1,4 +1,8 @@
-.l_entry.entry.nopicture
+.l_entry.entry{class: to ? '' : 'nopicture'}
+  - if to
+    .profile
+      %a.l_profile{href: "http://friendfeed.com/#{from.id}"}
+        %img{src: userpic_path(from.id), title: from.name, style: 'width:50px;height:50px;'}
   .body
     .ebody
       .title

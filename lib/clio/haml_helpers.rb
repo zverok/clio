@@ -28,6 +28,10 @@ class Helpers
     @regions_hash[region]
   end
 
+  def userpic_path(userid)
+    relative(context.path_("images/userpics/#{userid}.jpg"))
+  end
+
   def thumbnail_path(url)
     url.include?('http://m.friendfeed-media.com/') ?
       relative(context.path_("images/media/thumbnails/#{url.sub(%r{.+/}, '')}.jpg")) :

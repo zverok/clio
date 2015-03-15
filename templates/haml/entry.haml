@@ -8,7 +8,7 @@
     .l_entry.entry.entryview.large.expandedcomments.author
       .profile
         %a.l_profile{href: "http://friendfeed.com/#{from.id}"}
-          %img.picture.large{alt: "#{from.name}", src: "./images/userpic.jpg"}/
+          %img.picture.large{alt: "#{from.name}", src: userpic_path(from.id)}/
       .body
         .ebody
           .title
