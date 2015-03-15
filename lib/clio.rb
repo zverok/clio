@@ -51,14 +51,14 @@ class Clio
         feed_names.each do |name|
             context = FeedContext.new(self, name)
 
-            extract_feed? and context.extract_feed!
+            #extract_feed? and context.extract_feed!
 
             context.reload_entries!
 
-            extract_images? and [context.extract_images!, context.extract_userpics!]
+            extract_images? and [context.extract_pictures!, context.extract_userpics!]
 
-            context.index!
-            context.convert!
+            #context.index!
+            #context.convert!
         end
     end
 

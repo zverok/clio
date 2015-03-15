@@ -1,9 +1,6 @@
 # encoding: utf-8
-require 'simplehttp'
-require 'base64'
 require 'fileutils'
-
-require_relative './simplehttp_patch'
+require 'rest_client'
 
 class FriendFeedClient
     def initialize(user, key)
@@ -19,14 +16,7 @@ class FriendFeedClient
     end
     
     def raw_request(method, params = {})
-        http = SimpleHttp.new construct_url(method, params)
-        http.basic_authentication @user, @key
-        
-        # somehow internal SimpleHttp's redirection following fails
-        http.register_response_handler(Net::HTTPRedirection){|request, response, shttp| 
-            SimpleHttp.get response['location'] 
-        }
-        http.get
+        RestClient.get(construct_url(method), params: params).body
     #rescue RuntimeError => e
         #case e.message
         #when /Net::HTTPForbidden/
@@ -41,9 +31,7 @@ class FriendFeedClient
 
     private
     
-    def construct_url(method, params)
-        params.empty? ?
-            "http://friendfeed-api.com/v2/#{method}" :
-            "http://friendfeed-api.com/v2/#{method}?" + params.map{|k, v| "#{k}=#{v}"}.join('&')
+    def construct_url(method)
+        "http://#{@user}:#{@key}@friendfeed-api.com/v2/#{method}"
     end
 end

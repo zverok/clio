@@ -129,7 +129,7 @@ class Array
         end
     end
 
-    def construct_hash; Hash[*self.flatten(1)] end
+    def to_h; Hash[*self.flatten(1)] end
 
 	def resize!(newsize, val = nil)
 		if newsize < size

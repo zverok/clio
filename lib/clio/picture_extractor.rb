@@ -3,7 +3,8 @@ class PictureExtractor < Component
     
     def run
         load_urls!
-        extract_pictures!
+        extract_thumbnails!
+        extract_images!
     end
 
     def load_urls!
@@ -22,33 +23,57 @@ class PictureExtractor < Component
         log.info "Загружено: #{@thumbnails.count} адресов миниатюр, #{@images.count} адресов картинок"
     end
 
-    def extract_pictures!
-        context.path!('images/media/')
+    def extract_thumbnails!
+        context.path!('images/media/thumbnails/')
         
         thumbs = @thumbnails.map{|url|
-            [url, image_path(url)]
+            [url, thumb_path(url)]
         }.reject{|u, path| File.exists?(path)}
 
         log.info "Загружаем миниатюры: #{thumbs.count} из #{@thumbnails.count} ещё не было"
 
         thumbs.each_with_progress do |url, path|
-            File.write path, SimpleHttp.get(url)
+            File.write path, RestClient.get(url)
+        end
+    end
+
+    def extract_images!
+        if File.exists?(context.json_path('images.tsv'))
+            known = File.read(context.json_path('images.tsv')).split("\n").
+                map{|ln| ln.split("\t")}.to_h
+            imgs = @images.reject{|url| known.key?(url) && File.exists?(image_path(known[url]))}
+        else
+            imgs = @images.dup
         end
 
-        imgs = @images.map{|url|
-            [url, image_path(url)]
-        }.reject{|u, path| File.exists?(path)}
+        if imgs.empty?
+            log.info "Все картинки уже загружены"
+        else
+            imglog = File.open(context.json_path('images.tsv'), 'a')
+            imglog.sync = true
 
-        log.info "Загружаем картинки: #{imgs.count} из #{@images.count} ещё не было"
-        imgs.each_with_progress do |url, path|
-            File.write path, SimpleHttp.get(url)
+            log.info "Загружаем картинки: #{imgs.count} из #{@images.count} ещё не было"
+
+            imgs.each_with_progress do |url, path|
+                response = RestClient.get(url)
+                fname = response.headers[:content_disposition].scan(/filename="(.+)"/).flatten.first
+                fname.empty? and
+                    fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
+
+                imglog.puts [url, fname].join("\t")
+                
+                File.write image_path(fname), response.body
+            end
         end
     end
 
     private
 
-    # FIXME: всегда ли .png?
-    def image_path(url)
-        context.path("images/media/#{url.sub(%r{.+/}, '')}.png")
+    def thumb_path(url)
+        context.path("images/media/thumbnails/#{url.sub(%r{.+/}, '')}.jpg")
+    end
+
+    def image_path(filename)
+        context.path("images/media/#{filename}")
     end
 end

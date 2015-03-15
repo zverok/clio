@@ -1,7 +1,4 @@
-NB: frf знает реальные названия файлов. и они частью пнг, частью жпг!!!
-    Content-Disposition:attachment; filename="daisy_by_Dration.jpg"
-    сделать карту загруженных картинок?..
-    тумбнейлы всегда jpeg
+защититься от повторения имён файлов
 
 uniq при загрузке entries в feedcontext
 
@@ -19,6 +16,7 @@ uniq при загрузке entries в feedcontext
 
 zip-ование восстановить и потерянные options
 вернуть идею, что все vendors носим с собой
+    script/pack_vendors.rb
 восстановить rescue с понятным объяснением сетевых ошибок, отлов ошибок в самом clio
 прогресс-бар выводить только если лог — в STDOUT
 

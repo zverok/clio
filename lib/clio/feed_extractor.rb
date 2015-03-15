@@ -44,7 +44,7 @@ class FeedExtractor < Component
         end
 
         entries.each do |e|
-            File.write(feed.json_path!("entries/#{e['name']}.js"), e.to_json)
+            File.write(context.json_path!("entries/#{e['name']}.js"), e.to_json)
         end
 
         log.info "Загружено %i записей, начиная с %i; дата самой старой — '%s'" %
