@@ -17,6 +17,11 @@ class Clio
             raise
         end
     end
+
+    # FIXME: надо для сервера, но как-то неаккуратненько
+    def self.feed_info(user, key, feed = nil)
+        FriendFeedClient.new(user, key).request("feedinfo/#{feed || user}")
+    end
     
     def initialize(options)
         @options = options.dup

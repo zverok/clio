@@ -36,7 +36,7 @@ class FeedExtractor < Component
         end
         
         entries = page['entries'].map{|e| process_entry(e)}
-        feed.entries.push(*entries)
+        context.entries.push(*entries)
 
         if entries.last['date'] == @prev_oldest
             log.warn "Страница повторилась. Вероятно, наткнулись на ограничение FriendFeed. Останавливаемся."
