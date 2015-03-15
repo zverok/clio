@@ -6,7 +6,7 @@ class FeedExtractor < Component
         log.info "Загружаем метаинформацию #{context.feed_name}"
 
         File.write(context.json_path!("feedinfo.js"),
-            client.request("feedinfo/#{context.feed_name}"))
+            client.request("feedinfo/#{context.feed_name}").to_json)
         
         log.info "Загружаем записи #{context.feed_name}"
         

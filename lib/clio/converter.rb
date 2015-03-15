@@ -70,6 +70,8 @@ class Converter < Component
             i.zero? ? "" : "#{i*PAGE_SIZE}-#{(i+1)*PAGE_SIZE-1}"
         }
 
+        feedinfo = context.load_mash(context.json_path('feedinfo.js'))
+
         entries.values.sort_by(&:date).reverse.
             each_slice(PAGE_SIZE).zip(pages).each_with_index.to_a.
             each_with_progress do |(entries, page), i|
@@ -77,7 +79,7 @@ class Converter < Component
             render_page(
                 'index',
                 "index#{page}.html",
-                entries: entries, pager: {cur: i, pages: pages}
+                entries: entries, pager: {cur: i, pages: pages}, info: feedinfo
             )
         end
     end

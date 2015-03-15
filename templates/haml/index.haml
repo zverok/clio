@@ -1,21 +1,34 @@
 - content_for(:title){ "Главная #{pager.pages[pager.cur]}" }
 
-.box-bar.home
-  .box-corner
-  .box-bar-text
-    #realtimestatus.control
-    %span.title
-      %a Главная страница
-.subbar.home{:style => "display:none"}
 .box-body
-  #feed
-    - entries.each do |entry|
-      = partial(:entry, entry)
-  .pager.bottom
-    #pages
-      - pager.pages.each_with_index do |page, i|
-        %a{href: "index#{page}.html", class: (i == pager.cur) ? 'clio-current' : ''}= i+1
-  %div{:style => "clear:both; height:12px"}
+  .profile.withbar
+    .header
+      .profile
+        %a.l_editpicture{href: "http://friendfeed.com/#{info.id}"}
+          %img.picture.large{alt: info.name, src: userpic_path(info.id)}/
+      .body
+        .stats
+          %div
+            %a
+              %span.num= info.subscribers.count
+              подписчика/-ов
+            %a
+              %span.num= (info.subscriptions || []).count
+              подписок
+        %h1
+          %a.name{href: "http://friendfeed.com/#{info.id}"}= info.name
+        .description= info.description
+      .clear
+    .subbarcontainer
+      .subscribebar
+    #feed
+      - entries.each do |entry|
+        = partial(:entry, entry)
+    .pager.bottom
+      #pages
+        - pager.pages.each_with_index do |page, i|
+          %a{href: "index#{page}.html", class: (i == pager.cur) ? 'clio-current' : ''}= i+1
+  %div{style: "clear:both; height:12px"}
 .box-bottom
   .box-corner
   .box-spacer
