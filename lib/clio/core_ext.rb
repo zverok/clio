@@ -82,9 +82,11 @@ module Enumerable
     end
 
     def each_with_progress
-        require 'progress_bar'
-        p = ProgressBar.new(count)
-        each{|o| yield(o).tap{p.increment!}}
+        if count > 0
+            require 'progress_bar'
+            p = ProgressBar.new(count)
+            each{|o| yield(o).tap{p.increment!}}
+        end
     end
 end
 

@@ -60,9 +60,13 @@ class PictureExtractor < Component
 
             imgs.each_with_progress do |url, path|
                 response = RestClient.get(url)
-                fname = response.headers[:content_disposition].scan(/filename="(.+)"/).flatten.first
-                fname.empty? and
-                    fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
+                if response.headers.key?(:content_disposition)
+                    fname = response.headers[:content_disposition].to_s.scan(/filename="(.+)"/).flatten.first
+                    !fname || fname.empty? and
+                        fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
+                else
+                    fname = url.sub(/^.+\//, '') + '.png'
+                end
 
                 imglog.puts [url, fname].join("\t")
                 
