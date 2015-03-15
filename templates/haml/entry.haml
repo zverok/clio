@@ -7,13 +7,13 @@
   #feed
     .l_entry.entry.entryview.large.expandedcomments.author
       .profile
-        %a.l_profile{:href => "http://friendfeed.com/#{from.id}"}
-          %img.picture.large{:alt => "#{from.name}", :src => "./images/userpic.jpg"}/
+        %a.l_profile{href: "http://friendfeed.com/#{from.id}"}
+          %img.picture.large{alt: "#{from.name}", src: "./images/userpic.jpg"}/
       .body
         .ebody
           .title
             .name
-              %a.l_profile{:href => "http://friendfeed.com/#{from.id}"}= from.name
+              %a.l_profile{href: "http://friendfeed.com/#{from.id}"}= from.name
             .text= body
             - unless thumbnails.empty?
               .images.media
@@ -22,14 +22,14 @@
                     %tr
                       %td
                         .container
-                          %a{:href => thumbnail.link, :rel => "nofollow"}
-                            %img.thumbnail{:src => thumbnail.url, :style => "width:#{thumbnail.width}; height:#{thumbnail.height};"}/
+                          %a{href: image_path(thumbnail.link), rel: "nofollow"}
+                            %img.thumbnail{src: thumbnail_path(thumbnail.url), style: "width:#{thumbnail.width}; height:#{thumbnail.height};"}/
         .info
           %a.date{href: url}= dateFriendly
           - if via
             %span.via
               с
-              %a.service{:href => via.url, :rel => "nofollow"}= via.name
+              %a.service{href: via.url, rel: "nofollow"}= via.name
         .likes
           - likes.each do |like|
             %span.lbody

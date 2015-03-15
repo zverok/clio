@@ -53,9 +53,11 @@ class FeedContext
             
         @entries = []
         log.info "Загрузка всех записей #{feed_name}"
-        Dir[json_path('entries/*.js')].each_with_progress do |f|
-            @entries << load_mash(f)
-        end
+        Dir[json_path('entries/*.js')].
+            reject{|fn| fn.sub(json_path('entries/'), '').include?('/')}.
+            each_with_progress do |f|
+                @entries << load_mash(f)
+            end
         
     end
 
@@ -66,6 +68,10 @@ class FeedContext
 
     def templates_path
         clio.templates_path
+    end
+
+    def path_(*subpath)
+        path(*subpath).sub(result_path + '/', '')
     end
 
     def path(*subpath)

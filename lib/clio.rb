@@ -55,10 +55,10 @@ class Clio
 
             context.reload_entries!
 
-            extract_images? and [context.extract_pictures!, context.extract_userpics!]
+            #extract_images? and [context.extract_pictures!, context.extract_userpics!]
 
             #context.index!
-            #context.convert!
+            context.convert!
         end
     end
 

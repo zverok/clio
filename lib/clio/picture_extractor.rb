@@ -30,10 +30,14 @@ class PictureExtractor < Component
             [url, thumb_path(url)]
         }.reject{|u, path| File.exists?(path)}
 
-        log.info "Загружаем миниатюры: #{thumbs.count} из #{@thumbnails.count} ещё не было"
+        if thumbs.empty?
+            log.info "Все миниатюры уже загружены"
+        else
+            log.info "Загружаем миниатюры: #{thumbs.count} из #{@thumbnails.count} ещё не было"
 
-        thumbs.each_with_progress do |url, path|
-            File.write path, RestClient.get(url)
+            thumbs.each_with_progress do |url, path|
+                File.write path, RestClient.get(url)
+            end
         end
     end
 
