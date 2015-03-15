@@ -5,15 +5,8 @@
     %title= yield(:title)
     %link{href: relative("css/nano-theme-helvetica.css"), rel: "stylesheet", type: "text/css"}/
     %link{href: relative("css/clio.css"), rel: "stylesheet", type: "text/css"}/
-    %script{src: "./lib/jquery.js"}
-    %script{src: "./lib/pure.js"}
-    %script{src: "./lib/urlencode.js"}
-    %script{src: "./lib/jquery.query.js"}
-    %script{src: "./lib/clio-templates.js"}
-    %script{src: "./lib/settings.js"}
-    %script{src: "./lib/clio.js"}
-    :javascript
-      Clio.showEntry($.query.get('id'));
+    %script{src: relative("js/jquery.js")}
+    %script{src: relative("js/clio.js")}
   %body
     #bodydiv
       #container
