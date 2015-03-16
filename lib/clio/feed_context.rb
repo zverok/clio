@@ -18,15 +18,15 @@ require_relative './converter'
 Mash = Hashie::Mash
 
 class FeedContext
-    def initialize(clio, feed_name)
-        @clio, @feed_name = clio, feed_name
+    def initialize(clio, feed_name, options = {})
+        @clio, @feed_name, @options = clio, feed_name, options
 
         move_old_json!
         
         @entries = []
     end
 
-    attr_reader :clio, :feed_name, :entries
+    attr_reader :clio, :feed_name, :entries, :options
 
     # operations =======================================================
     def extract_feed!
@@ -76,7 +76,11 @@ class FeedContext
 
     # pathes ===========================================================
     def result_path
-        @result_path ||= File.join(clio.result_path, folder_name)
+        if options[:dates]
+            @result_path ||= File.join(clio.result_path, folder_name, Time.now.strftime('%Y-%m-%d'))
+        else
+            @result_path ||= File.join(clio.result_path, folder_name)
+        end
     end
 
     def templates_path

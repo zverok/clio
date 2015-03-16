@@ -37,10 +37,6 @@ class Clio
         @log = Logger.new(options[:log] || STDOUT).tap{|l|
             l.formatter = PrettyFormatter.new
         }
-
-        #if opts.dates?
-            #path = File.join(path, Time.now.strftime('%Y-%m-%d'))
-        #end
     end
 
     attr_reader :options, :client, :log,
@@ -49,7 +45,7 @@ class Clio
 
     def run!
         feed_names.each do |name|
-            context = FeedContext.new(self, name)
+            context = FeedContext.new(self, name, dates: options[:dates])
 
             extract_feed? and context.extract_feed!
 
