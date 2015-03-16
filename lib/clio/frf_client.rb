@@ -17,16 +17,6 @@ class FriendFeedClient
     
     def raw_request(method, params = {})
         RestClient.get(construct_url(method), params: params).body
-    #rescue RuntimeError => e
-        #case e.message
-        #when /Net::HTTPForbidden/
-            #Clio.log.error "Доступ запрещён: #{e.message.scan(%r{http://\S+}).flatten.first}"
-        #when /Net::HTTPUnauthorized/
-            #Clio.log.error "Авторизация не удалась (проверьте юзернейм и ремоут-ключ): #{e.message.scan(%r{http://\S+}).flatten.first}"
-        #else
-            #Clio.log.error "Ошибка: #{e.message}"
-        #end
-        #raise
     end
 
     private

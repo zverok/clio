@@ -61,6 +61,12 @@ class Clio
             context.index!
             context.convert!
         end
+    rescue RestClient::Unauthorized
+        log.error "Доступ запрещён, проверьте ключ и имя пользователя"
+    rescue RestClient::Forbidden
+        log.error "У вас нет доступа к этому фиду!"
+    rescue => e
+        log.error "Ошибка #{e.class}: #{e.message}\n\t" + e.backtrace.join("\n\t")
     end
 
     def feed_info(feed_name = nil)
