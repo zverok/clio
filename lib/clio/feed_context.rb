@@ -9,6 +9,7 @@ require_relative './component'
 require_relative './feed_extractor'
 require_relative './userpic_extractor'
 require_relative './picture_extractor'
+require_relative './file_extractor'
 
 require_relative './indexator'
 require_relative './converter'
@@ -37,6 +38,10 @@ class FeedContext
 
     def extract_pictures!
         PictureExtractor.new(self).run
+    end
+
+    def extract_files!
+        FileExtractor.new(self).run
     end
 
     def index!
@@ -100,6 +105,10 @@ class FeedContext
 
     def make_filename(text)
         Russian.translit(CGI.unescape(text)).downcase.gsub(/[^-a-z0-9]/, '_')
+    end
+
+    def next_name(fn)
+        fn.sub(/\.(\w+)$/, '_.\1')
     end
 
     # file services ====================================================

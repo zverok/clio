@@ -10,7 +10,7 @@
           .name
             %a.l_profile{href: "http://friendfeed.com/#{from.id}"}= from.name
         .text= body
-        - if thumbnails
+        - unless thumbnails.empty?
           .images.media
             - thumbnails.each do |thumbnail|
               %table
@@ -19,6 +19,9 @@
                     .container
                       %a{href: image_path(thumbnail.link), rel: "nofollow"}
                         %img.thumbnail{src: thumbnail_path(thumbnail.url), style: "width:#{thumbnail.width}; height:#{thumbnail.height};"}/
+      - unless files.empty?
+        - files.each do |file|
+          = partial(:file, file)
     .info
       %a.date{href: relative("entries/#{name}.html")}= dateFriendly
       - if via

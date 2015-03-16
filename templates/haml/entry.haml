@@ -29,6 +29,9 @@
                         .container
                           %a{href: image_path(thumbnail.link), rel: "nofollow"}
                             %img.thumbnail{src: thumbnail_path(thumbnail.url), style: "width:#{thumbnail.width}; height:#{thumbnail.height};"}/
+          - unless files.empty?
+            - files.each do |file|
+              = partial(:file, file)
         .info
           %a.date{href: url}= dateFriendly
           - if via

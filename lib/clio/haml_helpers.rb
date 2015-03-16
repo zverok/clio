@@ -52,6 +52,24 @@ class Helpers
     end
   end
 
+  def file_path(url)
+    @file_map ||= File.read(context.json_path('files.tsv')).split("\n").
+                  map{|ln| ln.split("\t")}.to_h
+
+    fname = @file_map[url] or
+      fail("Файл #{url} не скачан!")
+
+    relative(context.path_("files/#{fname}"))
+  end
+
+  def friendly_filesize(bytes)
+    if bytes < 1024*1024
+      '%i KB' % (bytes.to_f / 1024)
+    else
+      '%.1f MB' % (bytes.to_f / (1024*1024))
+    end
+  end
+
   private
 
   def local_img?(url)

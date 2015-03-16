@@ -116,6 +116,7 @@ class Converter < Component
 
         context.entries.each_with_progress do |e|
             e.thumbnails ||= []
+            e.files ||= []
             e.via = nil unless e.key?(:via)
             e.to = nil unless e.key?(:to)
             e.title = e.body.gsub(/<.+?>/, '')

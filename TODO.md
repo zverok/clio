@@ -1,7 +1,8 @@
-media dumper — музыка
-
-
 indexXX спрять в подпапку
+
+file:///media/storage/work/clio/result/zverok/lists/dates/2014-11.html
+наличие to — плохой признак для отображения иконок!
+if from.id != info.id || info.id == special
 
 форматирование спец.фидов
     direct: {from->to}
@@ -30,29 +31,6 @@ zip-ование восстановить и другие потерянные o
     L инициализируется при старте скрипта
 
 FrfClient - не падать при загрузке сходу (retry)
-
-media dumper — музыка?
-    entry.files
-    дублируется в неск.источниках!
-```
-    "files": [
-        {
-            "url": "http://m.friendfeed-media.com/19810cf70a9c5cfc244c86c814686ed7961234f6",
-            "icon": "http://friendfeed.com/static/images/filetypes/mp3.png?v=e028",
-            "type": "audio/mpeg",
-            "name": "03 - Думаю такое.mp3",
-            "size": 8999690
-        },
-        {
-            "url": "http://friendfeed-media.s3.amazonaws.com/19810cf70a9c5cfc244c86c814686ed7961234f6",
-            "type": "audio/mpeg3",
-            "name": "03 - Думаю такое.mp3",
-            "icon": "http://friendfeed.com/static/images/filetypes/default.png?v=a311"
-        }
-    ]
-```
-    рендеринг 
-
 
 встроенный ютюб?.. и всякое такое?
     http://friendfeed.com/zverok/e5fba5bb

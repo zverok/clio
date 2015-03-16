@@ -56,6 +56,7 @@ class Clio
             context.reload_entries!
 
             extract_images? and [context.extract_pictures!, context.extract_userpics!]
+            extract_files? and context.extract_files!
 
             context.index!
             context.convert!
@@ -82,6 +83,10 @@ class Clio
 
     def extract_images?
         !options[:indexonly] &&  !options[:noimages]
+    end
+
+    def extract_files?
+        !options[:indexonly] &&  options[:files]
     end
 
     def make_client

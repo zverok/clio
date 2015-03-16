@@ -1,0 +1,4 @@
+- if url.include?('m.friendfeed-media.com')
+  .file
+    %a{href: file_path(url), style: "background-image: url(#{relative('images/mp3.png')})"}= name
+    %span.filesize= friendly_filesize(size)
