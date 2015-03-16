@@ -60,6 +60,8 @@ class Clio
 
             context.index!
             context.convert!
+
+            zip? and context.zip!
         end
     rescue RestClient::Unauthorized
         log.error "Доступ запрещён, проверьте ключ и имя пользователя"
@@ -93,6 +95,10 @@ class Clio
 
     def extract_files?
         !options[:indexonly] &&  options[:files]
+    end
+
+    def zip?
+        options[:zip]
     end
 
     def make_client

@@ -3,6 +3,7 @@ require 'russian'
 require 'cgi'
 require 'hashie'
 require 'json'
+require 'archive/zip'
 
 require_relative './component'
 
@@ -50,6 +51,13 @@ class FeedContext
 
     def convert!
         Converter.new(self).run
+    end
+
+    def zip!
+        clio.log.info "Упаковываем результат"
+        zip_path = File.join(clio.result_path, "#{folder_name}-#{Time.now.strftime('%Y-%m-%d')}.zip")
+        Archive::Zip.archive(zip_path, result_path)
+        clio.log.info "Результат упакован в #{zip_path}"
     end
 
     def reload_entries!
