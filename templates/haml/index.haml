@@ -28,7 +28,10 @@
     .pager.bottom
       #pages
         - pager.pages.each_with_index do |page, i|
-          %a{href: "index#{page}.html", class: (i == pager.cur) ? 'clio-current' : ''}= i+1
+          - if i.zero?
+            %a{href: relative("index.html"), class: (i == pager.cur) ? 'clio-current' : ''}= i+1
+          - else
+            %a{href: relative("pages/index#{page}.html"), class: (i == pager.cur) ? 'clio-current' : ''}= i+1
   %div{style: "clear:both; height:12px"}
 .box-bottom
   .box-corner

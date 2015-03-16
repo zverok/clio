@@ -18,7 +18,7 @@ class UserpicExtractor < Component
         if context.feed_name =~ %r{^filter/}
             # личка - добавляем юзерпик юзера
             @users << context.clio.user
-        elsif contex.feed_name.include?('/')
+        elsif context.feed_name.include?('/')
             # zverok/likes - добавляем юзерпик zverok
             @users << context.feed_name.sub(%r{/.+$}, '')
         else

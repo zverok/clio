@@ -76,9 +76,10 @@ class Converter < Component
             each_slice(PAGE_SIZE).zip(pages).each_with_index.to_a.
             each_with_progress do |(entries, page), i|
 
+            path = i > 0 ? "pages/index#{page}.html" : 'index.html'
             render_page(
                 'index',
-                "index#{page}.html",
+                path,
                 entries: entries,
                 pager: {cur: i, pages: pages}
             )
