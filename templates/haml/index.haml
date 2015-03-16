@@ -7,14 +7,15 @@
         %a.l_editpicture{href: "http://friendfeed.com/#{info.id}"}
           %img.picture.large{alt: info.name, src: userpic_path(info.id)}/
       .body
-        .stats
-          %div
-            %span.num= info.subscribers.count
-            подписчика/-ов
-          - if info.subscriptions
+        - unless info.type == 'special'
+          .stats
             %div
-              %span.num= info.subscriptions.count
-              подписок
+              %span.num= info.subscribers.count
+              подписчика/-ов
+            - if info.subscriptions
+              %div
+                %span.num= info.subscriptions.count
+                подписок
         %h1
           %a.name{href: relative("index.html")}= info.name
         .description= info.description
@@ -23,7 +24,7 @@
       .subscribebar
     #feed
       - entries.each do |entry|
-        = partial(:entry, entry)
+        = partial(:entry, entry.merge(info: info))
     .pager.bottom
       #pages
         - pager.pages.each_with_index do |page, i|

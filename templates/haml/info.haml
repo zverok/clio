@@ -6,10 +6,23 @@
       %h1
         %a.l_profile{href: relative('index.html')}= info.name
         › Профиль
-    - if info.subscriptions && !info.subscriptions.empty?
-      %h2{:style => "margin-top:1em; margin-bottom:.5em"} Подписки
+    - unless info.type == 'special'
+      - if info.subscriptions && !info.subscriptions.empty?
+        %h2{:style => "margin-top:1em; margin-bottom:.5em"} Подписки
+        %table.usergrid
+          - info.subscriptions.select{|s| s.type == 'user'}.sort_by(&:id).each_slice(8) do |row|
+            %tr
+              - row.each do |user|
+                %td
+                  .picture
+                    %a.l_profile{href: "http://friendfeed.com/#{user.id}"}
+                      %img.picture.large{alt: user.name, src: userpic_path(user.id)}/
+                  .name
+                    %a.l_profile{href: "http://friendfeed.com/#{user.id}", title: user.id}= user.name
+
+      %h2{:style => "margin-top:1em; margin-bottom:.5em"} Подписчики
       %table.usergrid
-        - info.subscriptions.select{|s| s.type == 'user'}.sort_by(&:id).each_slice(8) do |row|
+        - info.subscribers.sort_by(&:id).each_slice(8) do |row|
           %tr
             - row.each do |user|
               %td
@@ -19,30 +32,18 @@
                 .name
                   %a.l_profile{href: "http://friendfeed.com/#{user.id}", title: user.id}= user.name
 
-    %h2{:style => "margin-top:1em; margin-bottom:.5em"} Подписчики
-    %table.usergrid
-      - info.subscribers.sort_by(&:id).each_slice(8) do |row|
-        %tr
-          - row.each do |user|
-            %td
-              .picture
-                %a.l_profile{href: "http://friendfeed.com/#{user.id}"}
-                  %img.picture.large{alt: user.name, src: userpic_path(user.id)}/
-              .name
-                %a.l_profile{href: "http://friendfeed.com/#{user.id}", title: user.id}= user.name
-
-    - if info.subscriptions && !info.subscriptions.empty?
-      %h2{:style => "margin-top:1em; margin-bottom:.5em"} Группы
-      %table.usergrid
-        - info.subscriptions.select{|s| s.type == 'group'}.sort_by(&:id).each_slice(8) do |row|
-          %tr
-            - row.each do |user|
-              %td
-                .picture
-                  %a.l_profile{href: "http://friendfeed.com/#{user.id}"}
-                    %img.picture.large{alt: user.name, src: userpic_path(user.id)}/
-                .name
-                  %a.l_profile{href: "http://friendfeed.com/#{user.id}", title: user.id}= user.name
+      - if info.subscriptions && !info.subscriptions.empty?
+        %h2{:style => "margin-top:1em; margin-bottom:.5em"} Группы
+        %table.usergrid
+          - info.subscriptions.select{|s| s.type == 'group'}.sort_by(&:id).each_slice(8) do |row|
+            %tr
+              - row.each do |user|
+                %td
+                  .picture
+                    %a.l_profile{href: "http://friendfeed.com/#{user.id}"}
+                      %img.picture.large{alt: user.name, src: userpic_path(user.id)}/
+                  .name
+                    %a.l_profile{href: "http://friendfeed.com/#{user.id}", title: user.id}= user.name
 
     %div{style: "clear:both; height:12px"}
 .box-bottom

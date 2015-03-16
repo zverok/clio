@@ -29,6 +29,9 @@ class Helpers
   end
 
   def userpic_path(userid)
+    if userid =~ %r{^filter/}
+      userid = context.clio.user
+    end
     relative(context.path_("images/userpics/#{userid}.jpg"))
   end
 
@@ -39,7 +42,7 @@ class Helpers
   end
 
   def image_path(url)
-    if local_img?(url)
+    if local_img?(url) && File.exists?(context.json_path('images.tsv'))
       @image_map ||= File.read(context.json_path('images.tsv')).split("\n").
                   map{|ln| ln.split("\t")}.to_h
 
@@ -53,13 +56,17 @@ class Helpers
   end
 
   def file_path(url)
-    @file_map ||= File.read(context.json_path('files.tsv')).split("\n").
-                  map{|ln| ln.split("\t")}.to_h
+    if File.exists?(context.json_path('files.tsv'))
+      @file_map ||= File.read(context.json_path('files.tsv')).split("\n").
+                    map{|ln| ln.split("\t")}.to_h
 
-    fname = @file_map[url] or
-      fail("Файл #{url} не скачан!")
+      fname = @file_map[url] or
+        fail("Файл #{url} не скачан!")
 
-    relative(context.path_("files/#{fname}"))
+      relative(context.path_("files/#{fname}"))
+    else
+      url
+    end
   end
 
   def friendly_filesize(bytes)

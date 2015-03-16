@@ -19,6 +19,10 @@
                 = succeed ":" do
                   %a.l_profile{href: relative("index.html")}= info.name
                 %a.l_profile{href: "http://friendfeed.com/#{from.id}"}= from.name
+                - if to && (to.count > 1 || to.first.id != info.id)
+                  →
+                  - [*to].each do |tto|
+                    %a.l_profile{href: "http://friendfeed.com/#{tto.id}"}= tto.name
             .text= body
             - unless thumbnails.empty?
               .images.media

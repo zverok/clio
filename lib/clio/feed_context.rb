@@ -141,7 +141,7 @@ class FeedContext
     def folder_name
         case feed_name
         when %r{^filter/(\w+)}
-            "#{clio.client.user}-#{$1}"
+            "#{clio.user}-#{$1}"
         when %r{/}
             feed_name.gsub('/', '-')
         else
