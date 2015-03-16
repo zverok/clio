@@ -19,6 +19,8 @@ class Converter < Component
         dump_indexes
 
         dump_main
+
+        dump_feedinfo
     end
 
     private
@@ -81,6 +83,11 @@ class Converter < Component
                 pager: {cur: i, pages: pages}
             )
         end
+    end
+
+    def dump_feedinfo
+        log.info "Строим страницу профайла"
+        render_page('info', 'info.html', {}) # feedinfo и так передаётся
     end
 
     def render_page(template_path, path, data)

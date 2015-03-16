@@ -13,9 +13,14 @@ class UserpicExtractor < Component
 
         @users = context.entries.map{|e|
             [e, *e.likes, *e.comments].map(&:from).map(&:id)
-        }.flatten.uniq.sort
+        }.flatten
 
-        @users |= [context.feed_name] # для групп, у них в самих записях юзерпик не встретится
+        @users << context.feed_name # для групп, у них в самих записях юзерпик не встретится
+
+        feedinfo = context.load_mash(context.json_path('feedinfo.js'))
+        @users.push(*[*feedinfo.subscribers, *feedinfo.subscriptions].map(&:id))
+
+        @users = @users.uniq.sort
 
         log.info "Загружено #{@users.count} пользователей"
     end
