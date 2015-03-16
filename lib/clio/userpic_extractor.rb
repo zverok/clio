@@ -15,7 +15,16 @@ class UserpicExtractor < Component
             [e, *e.likes, *e.comments].map(&:from).map(&:id)
         }.flatten
 
-        @users << context.feed_name # для групп, у них в самих записях юзерпик не встретится
+        if context.feed_name =~ %r{^filter/}
+            # личка - добавляем юзерпик юзера
+            @users << context.clio.user
+        elsif contex.feed_name.include?('/')
+            # zverok/likes - добавляем юзерпик zverok
+            @users << context.feed_name.sub(%r{/.+$}, '')
+        else
+            # для групп, у них в самих записях юзерпик не встретится
+            @users << context.feed_name 
+        end
 
         feedinfo = context.load_mash(context.json_path('feedinfo.js'))
         @users.push(*[*feedinfo.subscribers, *feedinfo.subscriptions].map(&:id))

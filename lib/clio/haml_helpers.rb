@@ -31,6 +31,8 @@ class Helpers
   def userpic_path(userid)
     if userid =~ %r{^filter/}
       userid = context.clio.user
+    elsif userid.include?('/')
+      userid = userid.sub(%r{/.+$}, '')
     end
     relative(context.path_("images/userpics/#{userid}.jpg"))
   end

@@ -2,16 +2,10 @@
 # encoding: utf-8
 
 require 'pp'
-require 'bundler/setup'
 
-#base_path = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-
-#$:.unshift File.join(base_path, 'lib')
-#$:.unshift File.join(base_path, 'vendors')
+$:.unshift File.expand_path('../../lib', __FILE__)
 
 require 'slop'
-
-#require 'core_ext'
 
 require_relative '../lib/clio'
 
