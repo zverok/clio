@@ -47,9 +47,9 @@ trap("INT"){
     exit(1)
 }
 
+$clio_show_progress = !opts[:log]
+
 begin
     clio = Clio.new(opts.to_hash)
     clio.run!
-#rescue => e
-    #logger.error "Вылетело по ошибке: #{e.message}"
 end

@@ -81,11 +81,15 @@ module Enumerable
         self.reverse_uniq_with{|i1, i2| yield(i1) == yield(i2)}
     end
 
-    def each_with_progress
+    def each_with_progress(&block)
         if count > 0
-            require 'progress_bar'
-            p = ProgressBar.new(count)
-            each{|o| yield(o).tap{p.increment!}}
+            if $clio_show_progress
+                require 'progress_bar'
+                p = ProgressBar.new(count)
+                each{|o| yield(o).tap{p.increment!}}
+            else
+                each(&block)
+            end
         end
     end
 end
