@@ -6,8 +6,27 @@ In Russian (look for English below)
 
 Бакапилка вашего френдфида.
 
-Как пользоваться (новый способ!)
---------------------------------
+Что нового в версии Clio2 (а это она!)
+--------------------------------------
+
+* Теперь работает во всех браузерах без проблем
+  * технические детали: мы теперь рендерим в статический HTML, а чистый JSON теперь в папке _json
+* Корректно работает (выгружает и форматирует) почти со всеми видами фидов:
+  * пользовательские фиды
+  * фиды групп
+  * «мои приватные сообщения» — ключ `-f filter/direct`
+  * «мои дискуссии» — ключ `-f filter/discussions` (фрф отдаст не более 1000 первых записей)
+  * «лайки этого пользователя» — `-f zverok/likes` (фрф отдаст не более 1000 первых записей)
+  * «комменты этого пользователя» — `-f zverok/comments` (фрф отдаст не более 1000 первых записей)
+* Выгружает картинки и юзерпики: делает это по умолчанию! чтобы не выгружать, добавьте ключ `--noimages`
+* Выгружает вложенные файлы (музыку): НЕ делает этого по умолчанию. Чтобы выгрузить, добавьте ключ `--files`
+* Сохраняет списки подписок/подписчиков: ткните на название фида в правом верхнем углу
+  * также есть и голый JSON: _json/data/feedinfo.js
+* Улучшено форматирование и удобство примерно везде!
+
+
+Как пользоваться
+----------------
 
 Распакуйте куда-нибудь содержимое архива и перейдите в эту папку.
 
@@ -26,81 +45,15 @@ In Russian (look for English below)
     -f, --feeds          Фид(ы) для загрузки, список через запятую: user1,group2,user3 (по умолчанию ваш собственный фид)
     -p, --path           Путь для сохранения фидов, по умолчанию папка result, каждый фид будет лежать в <path>/<feed>
     -l, --log            Путь для записи логов (по умолчанию STDOUT)
-    -d, --dates          Флаг для добавления текущей даты в имя папки: <path>/<feed>/<YYYY-MM-DD> (для бакапов по расписанию)
     -i, --indexonly      Только проиндексировать (данные уже загружены)
+        --noimages       Не загружать картинки (по умолчанию будут загружены)
+        --files          Загружать вложенные файлы (музыку). По умолчанию НЕ БУДУТ загружены
         --depth          Глубина загрузки (количество новых записей); по умолчанию — максимально возможное
         --zip            Упаковать в архив <path>/<feed>-<YYYY-MM-DD>.zip
-    -h, --help           Display this help message.
+    -d, --dates          Флаг для добавления текущей даты в имя папки: <path>/<feed>/<YYYY-MM-DD> (для бакапов по расписанию)
 
 ### Результат.
 
 Всё!
 
 Теперь в папках result/(имя фида) есть файл index.html —  просто откройте его в браузере.
-
-* В Firefox работает без проблем.
-* Чтобы работало в Opera: поставьте галку <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>.
-* Чтобы работало в Chrome: нужно запустить браузер с дополнительным параметром командной строки --allow-file-access-from-files.
-
-Другой вариант просмотра архива в Chrome:
-
-`ruby bin/server.rb (юзернейм)`
-
-Эта команда запустит сервер, на который можно будет зайти по адресу
-http://localhost:65261/index.html
-
-In English
-----------
-
-What is it
---------
-
-Backup tool for your FriendFeed.
-
-How to use it
--------------
-
-You will need Ruby v1.9 or newer.
-
-Clone repository or download it to some folder.
-
-Then, in command line (or Terminal):
-
-`ruby bin/clio-en.rb -u (username) -k (remote key) -f (list of feeds to load)`
-
-(remote key) can be received here: http://friendfeed.com/remotekey
-
-If you'll ommit -f, it will download your own feed.
-
-Options (you can also see them with: `ruby bin/clio-en.rb -h`):
-
-    -u, --user           Your username
-    -k, --key            Your remote key from http://friendfeed.com/remotekey
-    -f, --feeds          Feeds to load, comma-separated: user1,group2,user3 (your own feed by default)
-    -p, --path           Path to store feeds, by default its `result`, with each feed at <path>/<feed>
-    -l, --log            Path to write logs (STDOUT by default)
-    -d, --dates          If this flag provided, adds current date to folder name: <path>/<feed>/<YYYY-MM-DD> (useful for scheduled backups)
-    -i, --indexonly      Index only (data already loaded)
-        --depth          Depth of download (how many new entries to download); maximum possible (~10'000) by default
-        --zip            Pack into archive <path>/<feed>-<YYYY-MM-DD>.zip
-    -h, --help           Display this help message.
-
-### Result
-
-That's it!
-
-Now in folders like result/(feed name) you'll have index.html — just open it in browser.
-
-* It works seemlessly in Firefox.
-* To see it with Opera: check an option <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>.
-* To see it with Chrome: you should run your browser with --allow-file-access-from-files.
-
-Or, you can run:
-
-`ruby bin/server.rb (юзернейм)`
-
-And it will start simple server at http://localhost:65261/index.html, available from any browser.
-
-Or, if you'll upload everything on some server, you'll be able to see it (all browser hacks are only for "local" files).
-
-FYI, all your entries are stored in separate JSON files in your feed folder, so, if you are programmer, you can do something useful about it.
