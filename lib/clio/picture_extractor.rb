@@ -76,6 +76,10 @@ class PictureExtractor < Component
                     fname = url.sub(/^.+\//, '') + ".#{ext}"
                 end
 
+                while File.exists?(image_path(fname))
+                    fname = context.next_name(fname)
+                end
+
                 imglog.puts [url, fname].join("\t")
                 
                 File.write image_path(fname), response.body
