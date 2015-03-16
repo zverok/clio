@@ -33,13 +33,13 @@ class Helpers
   end
 
   def thumbnail_path(url)
-    url.include?('http://m.friendfeed-media.com/') ?
+    local_img?(url) ?
       relative(context.path_("images/media/thumbnails/#{url.sub(%r{.+/}, '')}.jpg")) :
       url
   end
 
   def image_path(url)
-    if url.include?('http://m.friendfeed-media.com/')
+    if local_img?(url)
       @image_map ||= File.read(context.json_path('images.tsv')).split("\n").
                   map{|ln| ln.split("\t")}.to_h
 
@@ -50,5 +50,12 @@ class Helpers
     else
       url
     end
+  end
+
+  private
+
+  def local_img?(url)
+    url.include?('http://m.friendfeed-media.com/') ||
+        url.include?('http://i.friendfeed.com/')
   end
 end

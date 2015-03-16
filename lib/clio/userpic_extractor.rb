@@ -15,6 +15,8 @@ class UserpicExtractor < Component
             [e, *e.likes, *e.comments].map(&:from).map(&:id)
         }.flatten.uniq.sort
 
+        @users |= [context.feed_name] # для групп, у них в самих записях юзерпик не встретится
+
         log.info "Загружено #{@users.count} пользователей"
     end
 

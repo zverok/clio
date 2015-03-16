@@ -1,4 +1,4 @@
-- content_for(:title){ "Главная #{pager.pages[pager.cur]}" }
+- content_for(:title){ "#{info.name} #{pager.pages[pager.cur]}" }
 
 .box-body
   .profile.withbar
@@ -9,11 +9,11 @@
       .body
         .stats
           %div
-            %a
-              %span.num= info.subscribers.count
-              подписчика/-ов
-            %a
-              %span.num= (info.subscriptions || []).count
+            %span.num= info.subscribers.count
+            подписчика/-ов
+          - if info.subscriptions
+            %div
+              %span.num= info.subscriptions.count
               подписок
         %h1
           %a.name{href: "http://friendfeed.com/#{info.id}"}= info.name

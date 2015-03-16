@@ -83,7 +83,7 @@ class DateIndex < Index
     
     def key(entry); parse_time(entry.date) end
     def row_descriptor(tm); tm.strftime('%Y-%m') end
-    def row_title(tm); tm.strftime('%B') end
+    def row_title(tm); Russian.strftime(tm, '%B') end
     
     def grouped?; true end
     def group_by(descriptor); descriptor.split('-', 2).first end

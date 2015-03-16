@@ -15,8 +15,8 @@ class PictureExtractor < Component
         context.entries.each_with_progress do |e|
             if e.thumbnails
                 e.thumbnails.each do |t|
-                    @thumbnails << t.url if t.url.include?('http://m.friendfeed-media.com/')
-                    @images << t.link if t.link.include?('http://m.friendfeed-media.com/')
+                    @thumbnails << t.url if local?(t.url)
+                    @images << t.link if local?(t.link)
                 end
             end
         end
@@ -65,7 +65,15 @@ class PictureExtractor < Component
                     !fname || fname.empty? and
                         fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
                 else
-                    fname = url.sub(/^.+\//, '') + '.png'
+                    ext = case response.headers[:content_type]
+                    when /png/
+                        'png'
+                    when /jpeg/
+                        'jpg'
+                    else
+                        'jpg'
+                    end
+                    fname = url.sub(/^.+\//, '') + ".#{ext}"
                 end
 
                 imglog.puts [url, fname].join("\t")
@@ -76,6 +84,11 @@ class PictureExtractor < Component
     end
 
     private
+
+    def local?(url)
+        url.include?('http://m.friendfeed-media.com/') ||
+            url.include?('http://i.friendfeed.com/')
+    end
 
     def thumb_path(url)
         context.path("images/media/thumbnails/#{url.sub(%r{.+/}, '')}.jpg")

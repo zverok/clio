@@ -1,4 +1,13 @@
 #sidebar
+  #profile
+    %table
+      %tr
+        %td.image
+          %a.l_profile{href: relative("info.html")}
+            %img.picture{src: userpic_path(info.id), title: info.name, style: 'width:50px;height:50px;'}
+        %td.body
+          .name
+            %a.l_profile{href: relative("info.html")}= info.name
   - indexes.each do |index|
     .box
       .box-bar

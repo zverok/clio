@@ -13,7 +13,12 @@
         .ebody
           .title
             .name
-              %a.l_profile{href: "http://friendfeed.com/#{from.id}"}= from.name
+              - if info.id == from.id
+                %a.l_profile{href: relative("index.html")}= info.name
+              - else
+                = succeed ":" do
+                  %a.l_profile{href: relative("index.html")}= info.name
+                %a.l_profile{href: "http://friendfeed.com/#{from.id}"}= from.name
             .text= body
             - unless thumbnails.empty?
               .images.media

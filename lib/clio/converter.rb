@@ -70,8 +70,6 @@ class Converter < Component
             i.zero? ? "" : "#{i*PAGE_SIZE}-#{(i+1)*PAGE_SIZE-1}"
         }
 
-        feedinfo = context.load_mash(context.json_path('feedinfo.js'))
-
         entries.values.sort_by(&:date).reverse.
             each_slice(PAGE_SIZE).zip(pages).each_with_index.to_a.
             each_with_progress do |(entries, page), i|
@@ -79,14 +77,18 @@ class Converter < Component
             render_page(
                 'index',
                 "index#{page}.html",
-                entries: entries, pager: {cur: i, pages: pages}, info: feedinfo
+                entries: entries,
+                pager: {cur: i, pages: pages}
             )
         end
     end
 
     def render_page(template_path, path, data)
         helpers = Helpers.new(context, path)
-        data = Mash.new(data).merge(sidebar_indexes: @sidebar_indexes)
+        data = Mash.new(data).merge(
+            sidebar_indexes: @sidebar_indexes,
+            info: feedinfo
+        )
 
         body = context.haml(template_path).render(helpers, data)
         html = context.haml('layout').render(helpers, data){|region|
@@ -96,6 +98,9 @@ class Converter < Component
         File.write(context.path!(path), html)
     end
 
+    def feedinfo
+        @feedinfo ||= context.load_mash(context.json_path('feedinfo.js'))
+    end
 
     def load_entries!
         @entries = {}
