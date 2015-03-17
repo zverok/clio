@@ -2,6 +2,10 @@
 require 'fileutils'
 require 'rest_client'
 
+class RestClient::Exception
+    attr_accessor :url
+end
+
 class FriendFeedClient
     def initialize(user, key)
         @user, @key = user, key
@@ -16,7 +20,11 @@ class FriendFeedClient
     end
     
     def raw_request(method, params = {})
-        RestClient.get(construct_url(method), params: params).body
+        url = construct_url(method)
+        RestClient.get(url, params: params).body
+    rescue RestClient::Exception => e
+        e.url = url
+        raise
     end
 
     private

@@ -29,8 +29,8 @@ class FeedContext
     attr_reader :clio, :feed_name, :entries, :options
 
     # operations =======================================================
-    def extract_feed!
-        FeedExtractor.new(self).run
+    def extract_feed!(max = 0)
+        FeedExtractor.new(self).run(max_depth: max)
     end
 
     def extract_userpics!

@@ -15,7 +15,8 @@ class PictureExtractor < Component
         context.entries.each_with_progress do |e|
             if e.thumbnails
                 e.thumbnails.each do |t|
-                    @thumbnails << t.url if local?(t.url)
+                    @thumbnails << t.url if local?(t.url) &&
+                        !t.url.include?('/old-') # это какой-то старинный артефакт, этих тумбнейлов нет уже
                     @images << t.link if local?(t.link)
                 end
             end
@@ -36,7 +37,7 @@ class PictureExtractor < Component
             log.info "Загружаем миниатюры: #{thumbs.count} из #{@thumbnails.count} ещё не было"
 
             thumbs.each_with_progress do |url, path|
-                File.write path, RestClient.get(url)
+                File.write path, get(url)
             end
         end
     end
@@ -59,7 +60,7 @@ class PictureExtractor < Component
             log.info "Загружаем картинки: #{imgs.count} из #{@images.count} ещё не было"
 
             imgs.each_with_progress do |url, path|
-                response = RestClient.get(url)
+                response = get(url)
                 if response.headers.key?(:content_disposition)
                     fname = response.headers[:content_disposition].to_s.scan(/filename="(.+)"/).flatten.first
                     !fname || fname.empty? and
@@ -100,5 +101,12 @@ class PictureExtractor < Component
 
     def image_path(filename)
         context.path("images/media/#{filename}")
+    end
+
+    def get(url)
+        RestClient.get(url)
+    rescue RestClient::Exception => e
+        e.url = url
+        raise
     end
 end

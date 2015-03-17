@@ -51,7 +51,7 @@ class UserpicExtractor < Component
         
         log.info "Копирование юзерпиков в папку пользователя"
         @users.each do |u|
-            FileUtils.cp userpic_path(u), context.path('images/userpics/')
+            FileUtils.cp userpic_path(u), context.path('images/userpics/') if File.exists?(userpic_path(u))
         end
     end
 
@@ -66,5 +66,7 @@ class UserpicExtractor < Component
     def extract_userpic(user, size='large')
         img = client.raw_request("picture/#{user}", 'size' => size)
         File.write userpic_path(user), img
+    rescue RestClient::Forbidden
+        log.warn "Не можем загружить юзерпик #{user} - наверное, юзер удалился"
     end
 end

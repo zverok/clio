@@ -47,7 +47,7 @@ class Clio
         feed_names.each do |name|
             context = FeedContext.new(self, name, dates: options[:dates])
 
-            extract_feed? and context.extract_feed!
+            extract_feed? and context.extract_feed!(options[:depth])
 
             context.reload_entries!
 
@@ -59,12 +59,21 @@ class Clio
 
             zip? and context.zip!
         end
-    rescue RestClient::Unauthorized
-        log.error "Доступ запрещён, проверьте ключ и имя пользователя"
-    rescue RestClient::Forbidden
-        log.error "У вас нет доступа к этому фиду!"
+    rescue RestClient::Unauthorized => e
+        log.error "Доступ запрещён, проверьте ключ и имя пользователя: #{e.url}"
+        raise
+    rescue RestClient::Forbidden => e
+        log.error "У вас нет доступа к этому фиду: #{e.url}!"
+        raise
+    rescue RestClient::ResourceNotFound => e
+        log.error "Тут ничего нет: #{e.url}!"
+        raise
+    rescue RestClient::Exception => e
+        log.error "Сетевая ошибка #{e.class} - #{e.message}: #{e.url}!"
+        raise
     rescue => e
         log.error "Ошибка #{e.class}: #{e.message}\n\t" + e.backtrace.join("\n\t")
+        raise
     end
 
     def feed_info(feed_name = nil)
