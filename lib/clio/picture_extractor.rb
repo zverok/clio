@@ -77,6 +77,8 @@ class PictureExtractor < Component
                     fname = url.sub(/^.+\//, '') + ".#{ext}"
                 end
 
+                fname = ensure_fname_length(fname)
+
                 while File.exists?(image_path(fname))
                     fname = context.next_name(fname)
                 end
@@ -107,5 +109,17 @@ class PictureExtractor < Component
     rescue RestClient::Exception => e
         e.url = url
         raise
+    end
+
+    MAXIMUM_FILENAME_LENGTH = 160
+
+    def ensure_fname_length(fname)
+        base, ext = fname.scan(/^(.+)\.(\w+)$/).flatten
+        if base.length > MAXIMUM_FILENAME_LENGTH
+            base = base[0...MAXIMUM_FILENAME_LENGTH]
+            "#{base}.#{ext}"
+        else
+            fname
+        end
     end
 end

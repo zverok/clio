@@ -68,7 +68,7 @@ class Clio
         log.error "Сетевая ошибка #{e.class} - #{e.message}: #{e.url}!"
         raise
     rescue => e
-        log.error "Ошибка #{e.class}: #{e.message}\n\t" + e.backtrace.join("\n\t")
+        log.error "Ошибка #{e.class}: #{e.message.force_encoding('UTF-8')}\n\t" + e.backtrace.join("\n\t")
         raise
     end
 
