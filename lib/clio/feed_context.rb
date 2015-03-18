@@ -119,8 +119,9 @@ class FeedContext
         Russian.translit(CGI.unescape(text)).downcase.gsub(/[^-a-z0-9]/, '_')
     end
 
+    # name.png => name1.png, name12.png => name13.png
     def next_name(fn)
-        fn.sub(/\.(\w+)$/, '_.\1')
+        fn.sub(/(\d*)\.(\w+)$/){|s| s.sub(/\d*/){|d| d.to_i + 1}}
     end
 
     # file services ====================================================

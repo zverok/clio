@@ -10,8 +10,8 @@ class FeedExtractor < Component
         
         log.info "Загружаем записи #{context.feed_name}"
         
-        start = options.fetch(:start, 0)
-        max = options.fetch(:max_depth, 0)
+        start = options[:start] || 0
+        max = options[:max_depth] || 0
         
         prev_last_entry, last_entry = nil
     

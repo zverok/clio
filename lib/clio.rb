@@ -10,12 +10,8 @@ class Clio
     def self.valid?(user, key)
         FriendFeedClient.new(user, key).request('validate')
         true
-    rescue RuntimeError => e
-        if e.message.include?('Net::HTTPUnauthorized')
-            false
-        else
-            raise
-        end
+    rescue RestClient::Unauthorized
+        false
     end
 
     # FIXME: надо для сервера, но как-то неаккуратненько

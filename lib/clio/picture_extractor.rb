@@ -81,9 +81,8 @@ class PictureExtractor < Component
                     fname = context.next_name(fname)
                 end
 
-                imglog.puts [url, fname].join("\t")
-                
                 File.write image_path(fname), response.body
+                imglog.puts [url, fname].join("\t")
             end
         end
     end
