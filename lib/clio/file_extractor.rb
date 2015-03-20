@@ -37,7 +37,7 @@ class FileExtractor < Component
             log.info "К загрузке #{to_load.count}"
             
             @files.each_with_progress do |name, url|
-                File.write context.path("files/#{name}"), RestClient.get(url)
+                File.open(context.path("files/#{name}"), 'wb'){|f| f.write RestClient.get(url).force_encoding('binary')}
             end
         end
     end
