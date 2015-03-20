@@ -38,9 +38,16 @@ class Helpers
   end
 
   def thumbnail_path(url)
-    local_img?(url) ?
-      relative(context.path_("images/media/thumbnails/#{url.sub(%r{.+/}, '')}.jpg")) :
+    if local_img?(url)
+      f = Dir[context.path_("images/media/thumbnails/#{url.sub(%r{.+/}, '')}.*")].first
+      if f
+        relative(f)
+      else
+        url
+      end
+    else
       url
+    end
   end
 
   def image_path(url)

@@ -134,7 +134,7 @@ class FeedContext
     end
 
     def load_mash(path)
-        Mash.new(JSON.parse(File.read(path)))
+        Mash.new(JSON.parse(File.read(path).force_encoding('UTF-8')))
     end
 
     private

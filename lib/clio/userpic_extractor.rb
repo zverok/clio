@@ -65,8 +65,12 @@ class UserpicExtractor < Component
 
     def extract_userpic(user, size='large')
         img = client.raw_request("picture/#{user}", 'size' => size)
-        File.write userpic_path(user), img
+        write_image userpic_path(user), img
     rescue RestClient::Forbidden
         log.warn "Не можем загружить юзерпик #{user} - наверное, юзер удалился"
+    end
+
+    def write_image(path, data)
+        File.open(path, 'wb'){|f| f.write data.force_encoding('binary')}
     end
 end

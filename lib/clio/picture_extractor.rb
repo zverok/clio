@@ -27,17 +27,16 @@ class PictureExtractor < Component
     def extract_thumbnails!
         context.path!('images/media/thumbnails/')
         
-        thumbs = @thumbnails.map{|url|
-            [url, thumb_path(url)]
-        }.reject{|u, path| File.exists?(path)}
+        thumbs = @thumbnails.reject{|url| thumb_exists?(url)}
 
         if thumbs.empty?
             log.info "Все миниатюры уже загружены"
         else
             log.info "Загружаем миниатюры: #{thumbs.count} из #{@thumbnails.count} ещё не было"
 
-            thumbs.each_with_progress do |url, path|
-                File.write path, get(url)
+            thumbs.each_with_progress do |url|
+                response = get(url)
+                write_thumb(url, response)
             end
         end
     end
@@ -66,14 +65,7 @@ class PictureExtractor < Component
                     !fname || fname.empty? and
                         fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
                 else
-                    ext = case response.headers[:content_type]
-                    when /png/
-                        'png'
-                    when /jpeg/
-                        'jpg'
-                    else
-                        'jpg'
-                    end
+                    ext = guess_ext(response)
                     fname = url.sub(/^.+\//, '') + ".#{ext}"
                 end
                 fname = 'noname.jpg' if fname == '.jpg' # да WTF же вообще????
@@ -84,13 +76,17 @@ class PictureExtractor < Component
                     fname = context.next_name(fname)
                 end
 
-                File.write image_path(fname), response.body
+                write_image(image_path(fname), response.body)
                 imglog.puts [url, fname].join("\t")
             end
         end
     end
 
     private
+
+    def write_image(path, data)
+        File.open(path, 'wb'){|f| f.write data.force_encoding('binary')}
+    end
 
     def local?(url)
         url.include?('http://m.friendfeed-media.com/') ||
@@ -121,6 +117,30 @@ class PictureExtractor < Component
             "#{base}.#{ext}"
         else
             fname
+        end
+    end
+
+    def write_thumb(url, response)
+        base = url.sub(/^.+\//, '')
+        ext = guess_ext(response)
+        write_image(context.path("images/media/thumbnails/#{base}.#{ext}"), response.body)
+    end
+
+    def thumb_exists?(url)
+        base = url.sub(/^.+\//, '')
+        File.exists?(context.path("images/media/thumbnails/#{base}.*"))
+    end
+
+    def guess_ext(response)
+        case response.headers[:content_type]
+        when /png/
+            'png'
+        when /jpeg/
+            'jpg'
+        when /gif/
+            'gif'
+        else
+            'jpg'
         end
     end
 end

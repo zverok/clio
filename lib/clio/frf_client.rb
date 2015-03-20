@@ -14,7 +14,7 @@ class FriendFeedClient
     attr_reader :user
 
     def request(method, params = {})
-        response = JSON.parse(raw_request(method, params))
+        response = JSON.parse(raw_request(method, params).force_encoding('UTF-8'))
         response['errorCode'] && raise(RuntimeError, response['errorCode']) 
         response
     end
