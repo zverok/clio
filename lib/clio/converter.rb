@@ -57,7 +57,8 @@ class Converter < Component
                     "lists/#{index.meta.descriptor}/#{context.make_filename(row.descriptor)}.html",
                     row.merge(
                         index: index,
-                        title: "#{index.meta.title}: #{row.title}"
+                        title: "#{index.meta.title}: #{row.title}",
+                        mtime: row.posts.map(&:mtime).max
                     )
                 )
             end
@@ -81,7 +82,8 @@ class Converter < Component
                 'index',
                 path,
                 entries: entries,
-                pager: {cur: i, pages: pages}
+                pager: {cur: i, pages: pages},
+                mtime: entries.map(&:mtime).max
             )
         end
     end
@@ -91,7 +93,14 @@ class Converter < Component
         render_page('info', 'info.html', {}) # feedinfo и так передаётся
     end
 
+    def newer?(path, tm)
+        path = context.path(path)
+        File.exists?(path) && File.mtime(path) > tm
+    end
+
     def render_page(template_path, path, data)
+        return if data[:mtime] && newer?(path, data[:mtime])
+        
         helpers = Helpers.new(context, path)
         data = Mash.new(data).merge(
             sidebar_indexes: @sidebar_indexes,

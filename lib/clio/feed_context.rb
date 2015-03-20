@@ -69,7 +69,7 @@ class FeedContext
         Dir[json_path('entries/*.js')].
             reject{|fn| fn.sub(json_path('entries/'), '').include?('__')}.
             each_with_progress do |f|
-                @entries << load_mash(f)
+                @entries << load_mash(f).merge(mtime: File.mtime(f))
             end
         
     end
