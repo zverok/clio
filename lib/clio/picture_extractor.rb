@@ -80,8 +80,6 @@ class PictureExtractor < Component
 
                 fname = ensure_fname_length(fname)
 
-                p [fname, response.headers[:content_disposition], response.headers[:content_type]]
-
                 while File.exists?(image_path(fname))
                     fname = context.next_name(fname)
                 end
