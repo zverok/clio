@@ -76,6 +76,7 @@ class PictureExtractor < Component
                     end
                     fname = url.sub(/^.+\//, '') + ".#{ext}"
                 end
+                fname = 'noname.jpg' if fname == '.jpg' # да WTF же вообще????
 
                 fname = ensure_fname_length(fname)
 
