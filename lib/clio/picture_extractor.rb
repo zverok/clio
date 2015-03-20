@@ -62,7 +62,7 @@ class PictureExtractor < Component
             imgs.each_with_progress do |url, path|
                 response = get(url)
                 if response.headers.key?(:content_disposition)
-                    fname = response.headers[:content_disposition].to_s.scan(/filename="(.+)"/).flatten.first
+                    fname = response.headers[:content_disposition].to_s.force_encoding('UTF-8').scan(/filename="(.+)"/).flatten.first
                     !fname || fname.empty? and
                         fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
                 else
@@ -79,6 +79,8 @@ class PictureExtractor < Component
                 fname = 'noname.jpg' if fname == '.jpg' # да WTF же вообще????
 
                 fname = ensure_fname_length(fname)
+
+                p [fname, response.headers[:content_disposition], response.headers[:content_type]]
 
                 while File.exists?(image_path(fname))
                     fname = context.next_name(fname)
