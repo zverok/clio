@@ -51,7 +51,7 @@ class Clio
             extract_files? and context.extract_files!
 
             context.index!
-            context.convert!
+            need_convert? and context.convert!
 
             zip? and context.zip!
         end
@@ -96,6 +96,10 @@ class Clio
 
     def extract_files?
         !options[:indexonly] &&  options[:files]
+    end
+
+    def need_convert?
+        !options[:noconvert]
     end
 
     def zip?
