@@ -1,4 +1,6 @@
 # encoding: utf-8
+Encoding.default_external = 'UTF-8'
+
 require 'logger'
 
 require_relative './clio/core_ext'
