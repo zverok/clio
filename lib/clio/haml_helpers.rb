@@ -39,9 +39,9 @@ class Helpers
 
   def thumbnail_path(url)
     if local_img?(url)
-      f = Dir[context.path_("images/media/thumbnails/#{url.sub(%r{.+/}, '')}.*")].first
+      f = Dir[context.path("images/media/thumbnails/#{url.sub(%r{.+/}, '')}.*")].first
       if f
-        relative(f)
+        relative(context.path_("images/media/thumbnails/#{File.basename(f)}"))
       else
         url
       end

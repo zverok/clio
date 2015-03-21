@@ -59,7 +59,7 @@ class Clio
         log.error "Доступ запрещён, проверьте ключ и имя пользователя: #{e.url}"
         raise
     rescue RestClient::Forbidden => e
-        log.error "У вас нет доступа к этому фиду: #{e.url}!"
+        log.error "У вас нет доступа к адресу #{e.url} или лимит API исчерпан. Попробуйте через пару часов."
         raise
     rescue RestClient::ResourceNotFound => e
         log.error "Тут ничего нет: #{e.url}!"
