@@ -128,7 +128,7 @@ class PictureExtractor < Component
 
     def thumb_exists?(url)
         base = url.sub(/^.+\//, '')
-        File.exists?(context.path("images/media/thumbnails/#{base}.*"))
+        Dir[context.path("images/media/thumbnails/#{base}.*")].any?{|f| File.exists? f }
     end
 
     def guess_ext(response)
