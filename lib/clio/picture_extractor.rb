@@ -112,7 +112,7 @@ class PictureExtractor < Component
 
     def ensure_fname_length(fname)
         base, ext = fname.scan(/^(.+)\.(\w+)$/).flatten
-        if base.length > MAXIMUM_FILENAME_LENGTH
+        if base and base.length > MAXIMUM_FILENAME_LENGTH
             base = base[0...MAXIMUM_FILENAME_LENGTH]
             "#{base}.#{ext}"
         else
