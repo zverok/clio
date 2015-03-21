@@ -1,6 +1,6 @@
 # encoding: utf-8
 class PictureExtractor < Component
-    
+
     def run
         load_urls!
         extract_thumbnails!
@@ -12,7 +12,7 @@ class PictureExtractor < Component
         @thumbnails = []
         @images = []
 
-        context.entries.each_with_progress do |e|
+        context.all_entries.each_with_progress do |e|
             if e.thumbnails
                 e.thumbnails.each do |t|
                     @thumbnails << t.url if local?(t.url) &&
@@ -26,7 +26,7 @@ class PictureExtractor < Component
 
     def extract_thumbnails!
         context.path!('images/media/thumbnails/')
-        
+
         thumbs = @thumbnails.reject{|url| thumb_exists?(url)}
 
         if thumbs.empty?
@@ -71,7 +71,7 @@ class PictureExtractor < Component
 
                 # да WTF же вообще????
                 # есть картинки с именами ".png" и т.п.
-                if fname =~ /^\.(\w+)$/ 
+                if fname =~ /^\.(\w+)$/
                     fname = "noname.#{$1}"
                 end
 

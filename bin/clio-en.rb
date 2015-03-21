@@ -28,6 +28,7 @@ opts = Slop.parse(:help => true){
     on :l, :log=, "Path to write logs (STDOUT by default)"
     on :d, :dates, "If this flag provided, adds current date to folder name: <path>/<feed>/<YYYY-MM-DD> (useful for scheduled backups)"
     on :i, :indexonly, "Index only (data already loaded)"
+    on :likes, "Download liked entries (don't downdload by default)"
     on :depth=, "Depth of download (how many new entries to download); maximum possible (~10'000) by default"
     on :zip, "Pack into archive <path>/<feed>-<YYYY-MM-DD>.zip"
 }

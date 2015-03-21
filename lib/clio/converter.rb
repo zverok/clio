@@ -6,7 +6,7 @@ require_relative './haml_helpers'
 class Converter < Component
     PAGE_SIZE = 30
 
-    attr_reader :entries
+    attr_reader :entries, :likes
 
     def run
         load_entries!
@@ -37,6 +37,12 @@ class Converter < Component
         @entries.each_with_progress do |name, entry|
             render_page('entry', "entries/#{entry.name}.html", entry)
         end
+
+        log.info "Превращаем в HTML залайканные записи"
+
+        @likes.each_with_progress do |name, entry|
+            render_page('entry', "likes/#{entry.name}.html", entry)
+        end
     end
 
     def dump_indexes
@@ -46,11 +52,17 @@ class Converter < Component
             rows = index.meta.kind == 'grouped' ? index.groups.map(&:rows).flatten(1) : index.rows
 
             log.info "Превращаем в HTML списки по индексу: #{index.meta.title}"
-            
+
             rows.each_with_progress do |row|
-                # метод entries у Hashie::Mash занят, поэтому приходится доступ по символу
-                # и переобозовать в posts
-                row.posts = entries.values_at(*row[:entries])
+                if index.meta.descriptor != 'likes'
+                    # метод entries у Hashie::Mash занят, поэтому приходится доступ по символу
+                    # и переобозовать в posts
+                    row.posts = entries.values_at(*row[:entries])
+                else
+                    # лайки нельзя добавлять в entries, потому что тогда они попадают в общую ленту,
+                    # так что подменяем row.posts, чтобы дальше ничего не менять
+                    row.posts = likes.values_at(*row[:entries])
+                end
 
                 render_page(
                     'list',
@@ -100,7 +112,7 @@ class Converter < Component
 
     def render_page(template_path, path, data)
         return if data[:mtime] && newer?(path, data[:mtime])
-        
+
         helpers = Helpers.new(context, path)
         data = Mash.new(data).merge(
             sidebar_indexes: @sidebar_indexes,
@@ -116,11 +128,18 @@ class Converter < Component
     end
 
     def feedinfo
+        if @feedinfo
+            return @feedinfo
+        end
+
         @feedinfo ||= context.load_mash(context.json_path('feedinfo.js'))
+        @feedinfo['likes'] = @likes
+        return @feedinfo
     end
 
     def load_entries!
         @entries = {}
+        @likes = {}
 
         log.info "Подготавливаем JSON к превращению в HTML"
 
@@ -131,6 +150,15 @@ class Converter < Component
             e.to = nil unless e.key?(:to)
             e.title = e.body.gsub(/<.+?>/, '')
             @entries[e.name] = e
+        end
+
+        context.likes.each_with_progress do |e|
+            e.thumbnails ||= []
+            e.files ||= []
+            e.via = nil unless e.key?(:via)
+            e.to = nil unless e.key?(:to)
+            e.title = e.body.gsub(/<.+?>/, '')
+            @likes[e.name] = e
         end
     end
 

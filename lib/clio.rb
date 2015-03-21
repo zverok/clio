@@ -20,7 +20,7 @@ class Clio
     def self.feed_info(user, key, feed = nil)
         FriendFeedClient.new(user, key).request("feedinfo/#{feed || user}")
     end
-    
+
     def initialize(options)
         @options = options.dup
         @client = make_client if need_client?
@@ -46,6 +46,7 @@ class Clio
             context = FeedContext.new(self, name, dates: options[:dates])
 
             extract_feed? and context.extract_feed!(options[:depth])
+            extract_likes? and context.extract_likes!
 
             context.reload_entries!
 
@@ -92,6 +93,10 @@ class Clio
         !options[:indexonly]
     end
 
+    def extract_likes?
+        !options[:indexonly] && options[:likes]
+    end
+
     def extract_images?
         !options[:indexonly] &&  !options[:noimages]
     end
@@ -111,7 +116,7 @@ class Clio
     def make_client
         options[:user] && options[:key] or
             fail ("Не указан пользователь или ключ (опции --user и --key)")
-            
+
         FriendFeedClient.new(options.fetch(:user), options.fetch(:key))
     end
 end

@@ -10,7 +10,7 @@ class FileExtractor < Component
     def load_urls!
         log.info "Загружаем адреса вложений"
         @files = {}
-        context.entries.each_with_progress do |e|
+        context.all_entries.each_with_progress do |e|
             if e.files
                 e.files.select{|f| f.url.include?('m.friendfeed-media.com')}.each do |f|
                     name = sanitize_filename(f.name)
@@ -36,7 +36,7 @@ class FileExtractor < Component
             log.info "Все файлы уже загружены"
         else
             log.info "К загрузке #{to_load.count}"
-            
+
             @files.each_with_progress do |name, url|
                 File.open(context.path("files/#{name}"), 'wb'){|f| f.write RestClient.get(url).force_encoding('binary')}
             end

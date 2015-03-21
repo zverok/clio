@@ -15,6 +15,15 @@ class Indexator < Component
             indexes.each{|i| i.put(e)}
         end
 
+        # Лайки индексируем отдельно
+        likes_index = LikesIndex.new
+        context.likes.each_with_progress do |e|
+            likes_index.put(e)
+        end
+
+        # Запихиваем индексер лайков в общий массив, чтобы всю остальную логику работы не трогать
+        indexes << likes_index
+
         log.info "#{description}: записи прочитаны, сохраняем индексы"
 
         indexes.each{|i| i.save(context.json_path!('indexes/'))}
@@ -24,10 +33,10 @@ class Indexator < Component
         # copy templates
         templates_src = context.templates_path
         templates_dst = context.path('_json')
-        
+
         Dir[File.join(templates_src, '**', '*.*')].each do |src|
             next if src.include?('haml')
-            
+
             dst = src.sub(templates_src, templates_dst)
             FileUtils.makedirs(File.dirname(dst))
             FileUtils.cp src, dst

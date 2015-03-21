@@ -11,6 +11,7 @@ require_relative './feed_extractor'
 require_relative './userpic_extractor'
 require_relative './picture_extractor'
 require_relative './file_extractor'
+require_relative './likes_extractor'
 
 require_relative './indexator'
 require_relative './converter'
@@ -22,11 +23,13 @@ class FeedContext
         @clio, @feed_name, @options = clio, feed_name, options
 
         move_old_json!
-        
+
         @entries = []
+        @likes = []
+        @all_entries = []
     end
 
-    attr_reader :clio, :feed_name, :entries, :options
+    attr_reader :clio, :feed_name, :entries, :likes, :all_entries, :options
 
     # operations =======================================================
     def extract_feed!(max = 0)
@@ -53,6 +56,10 @@ class FeedContext
         Converter.new(self).run
     end
 
+    def extract_likes!
+        LikesExtractor.new(self).run
+    end
+
     def zip!
         clio.log.info "Упаковываем результат"
         zip_path = File.join(clio.result_path, "#{folder_name}-#{Time.now.strftime('%Y-%m-%d')}.zip")
@@ -63,15 +70,29 @@ class FeedContext
     def reload_entries!
         Dir[json_path('entries/*.js')].empty? and
             fail("Нет ни одной записи для этого фида (ищу в #{json_path('entries/*.js')}, забыли загрузить?..")
-            
+
+        # Для загрузки файлов из обычных записей и залайканных, придётся продублировать все записи :(
+        @all_entries = []
+
         @entries = []
         log.info "Загрузка всех записей #{feed_name}"
         Dir[json_path('entries/*.js')].
             reject{|fn| fn.sub(json_path('entries/'), '').include?('__')}.
             each_with_progress do |f|
-                @entries << load_mash(f).merge(mtime: File.mtime(f))
+                e = load_mash(f).merge(mtime: File.mtime(f))
+                @entries << e
+                @all_entries << e
             end
-        
+
+        @likes = []
+        log.info "Загрузка записей, залайканных пользователем #{feed_name}"
+        Dir[json_path('likes/*.js')].
+            reject{|fn| fn.sub(json_path('likes/'), '').include?('__')}.
+            each_with_progress do |f|
+                e = load_mash(f).merge(mtime: File.mtime(f))
+                @likes << e
+                @all_entries << e
+            end
     end
 
     # pathes ===========================================================

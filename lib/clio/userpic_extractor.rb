@@ -11,7 +11,7 @@ class UserpicExtractor < Component
     def load_users!
         log.info "Загружаем имена пользователей"
 
-        @users = context.entries.map{|e|
+        @users = context.all_entries.map{|e|
             [e, *e.likes, *e.comments].map(&:from).map(&:id)
         }.flatten
 
@@ -23,7 +23,7 @@ class UserpicExtractor < Component
             @users << context.feed_name.sub(%r{/.+$}, '')
         else
             # для групп, у них в самих записях юзерпик не встретится
-            @users << context.feed_name 
+            @users << context.feed_name
         end
 
         feedinfo = context.load_mash(context.json_path('feedinfo.js'))
@@ -48,7 +48,7 @@ class UserpicExtractor < Component
 
     def copy_userpics
         context.path!('images/userpics/')
-        
+
         log.info "Копирование юзерпиков в папку пользователя"
         @users.each do |u|
             FileUtils.cp userpic_path(u), context.path('images/userpics/') if File.exists?(userpic_path(u))

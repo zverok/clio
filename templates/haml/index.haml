@@ -16,6 +16,9 @@
               %div
                 %span.num= info.subscriptions.count
                 подписок
+            - if info.likes
+              %div
+                %a{href: relative("lists/likes/likes.html")} #{info.likes.count} залайканных записей
         %h1
           %a.name{href: relative("index.html")}= info.name
         .description= info.description
