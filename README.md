@@ -63,28 +63,26 @@ In Russian (look for English below)
 Инструкция по использованию Clio для пользователей OS X
 -------------------------------------------------------
 
-В инструкции есть готовые команды — для первого и последующих бекапов.
-
-Перед запуском нужно подкорректировать команду в 3 местах:
+В инструкции есть готовые команды, перед запуском их нужно подкорректировать в 3 местах:
 
 * USERNAME — ваше имя пользователя
 * REMOTE_KEY — https://friendfeed.com/account/api
 * После ключа `-f` — имена пользователей или групп для сохранения, а также `filter/discussions` и `filter/direct` (пример: `-f USERNAME,USERNAME2,GROUP,filter/discussions,filter/direct`).
 
-### Первый запуск
+### Установка
 
 1. В Файндере в удобном месте создать папку для бекапов, например, `/Users/username/FRF`
 2. Открыть Терминал, набрать в нём `cd ` (с пробелом после `cd`).
 3. Затем перетащить в окно Терминала созданную для бекапов папку — в результате подставится путь. Нажать Enter.
-4. Подредактировать и выполнить в Терминале:
+4. Выполнить в Терминале:
 
 ```bash
-dir=$(pwd) && mkdir Backup && wget https://github.com/zverok/clio/archive/clio2.zip && unzip clio2.zip && clio-clio2/bin/clio.rb -u USERNAME -k REMOTE_KEY --files -p "$dir/Backup" -f ЧТО_СОХРАНЯТЬ
+mkdir Backup && wget https://github.com/zverok/clio/archive/clio2.zip && unzip clio2.zip
 ```
 
-### Последующие запуски
+### Запуск Clio
 
-* Повторить 2 и 3 пункты, а затем выполнить:
+* Выполнить в Терминале (как раз здесь необходимо указать свои данные):
 
 ```bash
 dir=$(pwd) && clio-clio2/bin/clio.rb -u USERNAME -k REMOTE_KEY --files -p "$dir/Backup" -f ЧТО_СОХРАНЯТЬ
