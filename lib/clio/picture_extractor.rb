@@ -68,7 +68,12 @@ class PictureExtractor < Component
                     ext = guess_ext(response)
                     fname = url.sub(/^.+\//, '') + ".#{ext}"
                 end
-                fname = 'noname.jpg' if fname == '.jpg' # да WTF же вообще????
+
+                # да WTF же вообще????
+                # есть картинки с именами ".png" и т.п.
+                if fname =~ /^\.(\w+)$/ 
+                    fname = "noname.#{$1}"
+                end
 
                 fname = ensure_fname_length(fname)
 
@@ -112,6 +117,7 @@ class PictureExtractor < Component
 
     def ensure_fname_length(fname)
         base, ext = fname.scan(/^(.+)\.(\w+)$/).flatten
+        base.nil? and fail("Странное имя файла: #{fname}")
         if base.length > MAXIMUM_FILENAME_LENGTH
             base = base[0...MAXIMUM_FILENAME_LENGTH]
             "#{base}.#{ext}"
