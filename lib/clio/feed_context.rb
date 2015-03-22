@@ -61,10 +61,16 @@ class FeedContext
     end
 
     def reload_entries!
-        Dir[json_path('entries/*.js')].empty? and
-            fail("Нет ни одной записи для этого фида (ищу в #{json_path('entries/*.js')}, забыли загрузить?..")
-            
         @entries = []
+        
+        if Dir[json_path('entries/*.js')].empty?
+            File.exists?(json_path('feedinfo.js')) or
+                fail("Нет данных для этого фида (ищу в #{json_path('entries/*.js')}, забыли загрузить?..")
+
+            log.warn "feedinfo.js есть, а записей нету, может быть не всё загрузили?"
+            return
+        end
+            
         log.info "Загрузка всех записей #{feed_name}"
         Dir[json_path('entries/*.js')].
             reject{|fn| fn.sub(json_path('entries/'), '').include?('__')}.
