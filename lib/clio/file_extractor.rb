@@ -13,10 +13,11 @@ class FileExtractor < Component
         context.entries.each_with_progress do |e|
             if e.files
                 e.files.select{|f| f.url.include?('m.friendfeed-media.com')}.each do |f|
-                    while @files.key?(f.name) && @files[f.name] != f.url
-                        f.name = context.next_name(f.name)
+                    name = sanitize_filename(f.name)
+                    while @files.key?(name) && @files[name] != f.url
+                        f.name = context.next_name(name)
                     end
-                    @files[f.name] = f.url
+                    @files[name] = f.url
                 end
             end
         end
@@ -42,4 +43,9 @@ class FileExtractor < Component
         end
     end
 
+    def sanitize_filename(filename)
+        filename.strip.
+            gsub(/^.*(\\|\/)/, '').
+            gsub(/[?!]/, '_')
+    end
 end
