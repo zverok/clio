@@ -46,6 +46,6 @@ class FileExtractor < Component
     def sanitize_filename(filename)
         filename.strip.
             gsub(/^.*(\\|\/)/, '').
-            gsub(/[?!]/, '_')
+            gsub(/[?!:]/, '_')
     end
 end

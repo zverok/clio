@@ -70,13 +70,7 @@ class PictureExtractor < Component
                         fname = url.sub(/^.+\//, '') + ".#{ext}"
                     end
 
-                    # да WTF же вообще????
-                    # есть картинки с именами ".png" и т.п.
-                    if fname =~ /^\.(\w+)$/ 
-                        fname = "noname.#{$1}"
-                    end
-
-                    fname = ensure_fname_length(fname)
+                    fname = sanitize_filename(fname)
 
                     while File.exists?(image_path(fname))
                         fname = context.next_name(fname)
@@ -118,6 +112,20 @@ class PictureExtractor < Component
     end
 
     MAXIMUM_FILENAME_LENGTH = 160
+
+    def sanitize_filename(filename)
+        # да WTF же вообще????
+        # есть картинки с именами ".png" и т.п.
+        if filename =~ /^\.(\w+)$/ 
+            filename = "noname.#{$1}"
+        end
+
+        filename = filename.strip.
+            gsub(/^.*(\\|\/)/, '').
+            gsub(/[?!:]/, '_')
+
+        ensure_fname_length(filename)
+    end
 
     def ensure_fname_length(fname)
         base, ext = fname.scan(/^(.+)\.(\w+)$/).flatten
