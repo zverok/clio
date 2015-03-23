@@ -35,8 +35,9 @@ class PictureExtractor < Component
             log.info "Загружаем миниатюры: #{thumbs.count} из #{@thumbnails.count} ещё не было"
 
             thumbs.each_with_progress do |url|
-                response = get(url)
-                write_thumb(url, response)
+                if response = get(url)
+                    write_thumb(url, response)
+                end
             end
         end
     end
@@ -59,30 +60,31 @@ class PictureExtractor < Component
             log.info "Загружаем картинки: #{imgs.count} из #{@images.count} ещё не было"
 
             imgs.each_with_progress do |url, path|
-                response = get(url)
-                if response.headers.key?(:content_disposition)
-                    fname = response.headers[:content_disposition].to_s.force_encoding('UTF-8').scan(/filename="(.+)"/).flatten.first
-                    !fname || fname.empty? and
-                        fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
-                else
-                    ext = guess_ext(response)
-                    fname = url.sub(/^.+\//, '') + ".#{ext}"
+                if response = get(url)
+                    if response.headers.key?(:content_disposition)
+                        fname = response.headers[:content_disposition].to_s.force_encoding('UTF-8').scan(/filename="(.+)"/).flatten.first
+                        !fname || fname.empty? and
+                            fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
+                    else
+                        ext = guess_ext(response)
+                        fname = url.sub(/^.+\//, '') + ".#{ext}"
+                    end
+
+                    # да WTF же вообще????
+                    # есть картинки с именами ".png" и т.п.
+                    if fname =~ /^\.(\w+)$/ 
+                        fname = "noname.#{$1}"
+                    end
+
+                    fname = ensure_fname_length(fname)
+
+                    while File.exists?(image_path(fname))
+                        fname = context.next_name(fname)
+                    end
+
+                    write_image(image_path(fname), response.body)
+                    imglog.puts [url, fname].join("\t")
                 end
-
-                # да WTF же вообще????
-                # есть картинки с именами ".png" и т.п.
-                if fname =~ /^\.(\w+)$/ 
-                    fname = "noname.#{$1}"
-                end
-
-                fname = ensure_fname_length(fname)
-
-                while File.exists?(image_path(fname))
-                    fname = context.next_name(fname)
-                end
-
-                write_image(image_path(fname), response.body)
-                imglog.puts [url, fname].join("\t")
             end
         end
     end
@@ -108,6 +110,8 @@ class PictureExtractor < Component
 
     def get(url)
         RestClient.get(url)
+    rescue RestClient::Forbidden
+        nil
     rescue RestClient::Exception => e
         e.url = url
         raise

@@ -55,10 +55,12 @@ class Helpers
       @image_map ||= File.read(context.json_path('images.tsv')).split("\n").
                   map{|ln| ln.split("\t")}.to_h
 
-      fname = @image_map[url] or
-        fail("Картинка #{url} не скачана!")
-
-      relative(context.path_("images/media/#{fname}"))
+      if fname = @image_map[url]
+        relative(context.path_("images/media/#{fname}"))
+      else
+        context.clio.log.warn("Картинка #{url} не скачана!")
+        url
+      end
     else
       url
     end
