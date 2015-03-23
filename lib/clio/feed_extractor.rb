@@ -5,8 +5,7 @@ class FeedExtractor < Component
     def run(options = {})
         log.info "Загружаем метаинформацию #{context.feed_name}"
 
-        File.write(context.json_path!("feedinfo.js"),
-            client.request("feedinfo/#{context.feed_name}").to_json)
+        save_feedinfo
         
         log.info "Загружаем записи #{context.feed_name}"
         
@@ -26,6 +25,11 @@ class FeedExtractor < Component
     end
 
     private
+
+    def save_feedinfo
+        File.write(context.json_path!("feedinfo.js"),
+            client.request("feedinfo/#{context.feed_name}").to_json)
+    end
 
     def next_page(start)
         page = extract_feed(start: start, num: PAGE_SIZE)
