@@ -60,6 +60,7 @@ class PictureExtractor < Component
 
             imgs.each_with_progress do |url, path|
                 response = get(url)
+                next unless response
                 if response.headers.key?(:content_disposition)
                     fname = response.headers[:content_disposition].to_s.force_encoding('UTF-8').scan(/filename="(.+)"/).flatten.first
                     !fname || fname.empty? and
@@ -108,6 +109,9 @@ class PictureExtractor < Component
 
     def get(url)
         RestClient.get(url)
+    rescue RestClient::Forbidden => e
+        log.error "Не могу скачать #{url}, пропускаю."
+        nil
     rescue RestClient::Exception => e
         e.url = url
         raise
