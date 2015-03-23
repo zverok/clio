@@ -122,7 +122,8 @@ class PictureExtractor < Component
 
         filename = filename.strip.
             gsub(/^.*(\\|\/)/, '').
-            gsub(/[?!:]/, '_')
+            gsub(/[?!:]/, '_').
+            sub(/\.$/, '') # встретился файл «image.bmp.». чего только люди не выдумают!
 
         ensure_fname_length(filename)
     end
