@@ -9,9 +9,10 @@
       .body
         - unless info.type == 'special'
           .stats
-            %div
-              %span.num= info.subscribers.count
-              подписчика/-ов
+            - if info.subscribers
+              %div
+                %span.num= info.subscribers.count
+                подписчика/-ов
             - if info.subscriptions
               %div
                 %span.num= info.subscriptions.count

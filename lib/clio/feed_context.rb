@@ -8,6 +8,7 @@ require 'archive/zip'
 require_relative './component'
 
 require_relative './feed_extractor'
+require_relative './search_feed_extractor'
 require_relative './userpic_extractor'
 require_relative './picture_extractor'
 require_relative './file_extractor'
@@ -28,9 +29,22 @@ class FeedContext
 
     attr_reader :clio, :feed_name, :entries, :options
 
+    def search_request
+        search_feed? or fail("Not a search feed: #{feed_name}")
+        feed_name.sub(/^search=/, '')
+    end
+
+    def search_feed?
+        feed_name =~ /^search=(.+)$/
+    end
+
     # operations =======================================================
     def extract_feed!(max = 0)
-        FeedExtractor.new(self).run(max_depth: max)
+        if search_feed?
+            SearchFeedExtractor.new(self).run(max_depth: max)
+        else
+            FeedExtractor.new(self).run(max_depth: max)
+        end
     end
 
     def extract_userpics!
@@ -159,6 +173,8 @@ class FeedContext
 
     def folder_name
         case feed_name
+        when %r{^search=(.+)$}
+            "#{clio.user}-#{Russian.translit(search_request.gsub(/[+\/:?*]/, '-'))}"
         when %r{^filter/(\w+)}
             "#{clio.user}-#{$1}"
         when %r{/}

@@ -21,6 +21,9 @@ opts = Slop.parse(:help => true){
         "Фид(ы) для загрузки, список через запятую: user1,group2,user3 (по умолчанию ваш собственный фид)",
         as: Array
 
+    on :s, :search=,
+        "Поисковый запрос для загрузки, синтаксис: http://friendfeed.com/search/advanced"
+
     on :p, :path=,
         "Путь для сохранения фидов, по умолчанию папка result, каждый фид будет лежать в <path>/<feed>"
 

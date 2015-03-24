@@ -15,7 +15,7 @@ class UserpicExtractor < Component
             [e, *e.likes, *e.comments].map(&:from).map(&:id)
         }.flatten
 
-        if context.feed_name =~ %r{^filter/}
+        if context.feed_name =~ %r{^filter/} || context.search_feed?
             # личка - добавляем юзерпик юзера
             @users << context.clio.user
         elsif context.feed_name.include?('/')

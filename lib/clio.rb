@@ -27,7 +27,13 @@ class Clio
         @base_path = File.expand_path(File.join(File.dirname(__FILE__), '..'))
         @templates_path = File.join(base_path, 'templates')
         @result_path = options[:path] || File.join(@base_path, 'result')
-        @feed_names = options[:feeds] || [options[:user]].compact
+
+        @feed_names = []
+        @feed_names << "search=#{CGI.unescape(options[:search])}" if options[:search]
+        
+        @feed_names.push(*options[:feeds]) if options[:feeds]
+            
+        @feed_names = [options[:user]] if @feed_names.empty?
 
         @feed_names.empty? and
             fail("Не заданы фиды для обработки (опция --feeds или --user)")

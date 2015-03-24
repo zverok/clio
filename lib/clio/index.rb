@@ -107,6 +107,15 @@ class HashtagIndex < Index
     end
 end
 
+#class MP3Index < Index
+    #def descriptor; 'mp3' end
+    #def title; 'Музыка' end
+
+    #def key(entry)
+        #entry.files && 
+    #end
+#end
+
 class MonthDaysIndex < Index
     def initialize(month_descriptor)
         super()
