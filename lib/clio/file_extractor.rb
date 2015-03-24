@@ -15,7 +15,7 @@ class FileExtractor < Component
                 e.files.select{|f| f.url.include?('m.friendfeed-media.com')}.each do |f|
                     name = sanitize_filename(f.name)
                     while @files.key?(name) && @files[name] != f.url
-                        f.name = context.next_name(name)
+                        name = context.next_name(name)
                     end
                     @files[name] = f.url
                 end
