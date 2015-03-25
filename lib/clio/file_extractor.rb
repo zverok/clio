@@ -13,7 +13,7 @@ class FileExtractor < Component
         context.entries.each_with_progress do |e|
             if e.files
                 e.files.select{|f| f.url.include?('m.friendfeed-media.com')}.each do |f|
-                    name = sanitize_filename(f.name)
+                    name = context.sanitize_filename(f.name)
                     while @files.key?(name) && @files[name] != f.url
                         name = context.next_name(name)
                     end
@@ -41,11 +41,5 @@ class FileExtractor < Component
                 File.open(context.path("files/#{name}"), 'wb'){|f| f.write RestClient.get(url).force_encoding('binary')}
             end
         end
-    end
-
-    def sanitize_filename(filename)
-        filename.strip.
-            gsub(/^.*(\\|\/)/, '').
-            gsub(/[?!:]/, '_')
     end
 end

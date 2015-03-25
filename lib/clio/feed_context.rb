@@ -139,6 +139,35 @@ class FeedContext
         Russian.translit(CGI.unescape(text)).downcase.gsub(/[^-a-z0-9]/, '_')
     end
 
+    def sanitize_filename(filename)
+        # да WTF же вообще????
+        # есть картинки с именами ".png" и т.п.
+        if filename =~ /^\.(\w+)$/ 
+            filename = "noname.#{$1}"
+        end
+
+        filename = filename.strip.
+            gsub(/^.*(\\|\/)/, '').
+            gsub(/[?!:|]/, '_').
+            sub(/\.$/, '') # встретился файл «image.bmp.». чего только люди не выдумают!
+
+        ensure_fname_length(filename)
+    end
+
+    MAXIMUM_FILENAME_LENGTH = 160
+
+    def ensure_fname_length(fname)
+        base, ext = fname.scan(/^(.+)\.(\w+)$/).flatten
+        base.nil? and fail("Странное имя файла: #{fname}")
+        if base.length > MAXIMUM_FILENAME_LENGTH
+            base = base[0...MAXIMUM_FILENAME_LENGTH]
+            "#{base}.#{ext}"
+        else
+            fname
+        end
+    end
+    
+
     # name.png => name1.png, name12.png => name13.png
     def next_name(fn)
         fn.sub(/(\d*)\.(\w+)$/){|s| s.sub(/\d*/){|d| d.to_i + 1}}
