@@ -154,7 +154,7 @@ class FeedContext
         ensure_fname_length(filename)
     end
 
-    MAXIMUM_FILENAME_LENGTH = 160
+    MAXIMUM_FILENAME_LENGTH = 100
 
     def ensure_fname_length(fname)
         base, ext = fname.scan(/^(.+)\.(\w+)$/).flatten
