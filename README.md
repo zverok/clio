@@ -77,7 +77,7 @@ In Russian (look for English below)
 4. Выполнить в Терминале:
 
 ```bash
-mkdir Backup && wget https://github.com/zverok/clio/archive/clio2.zip && unzip clio2.zip
+mkdir Backup && curl -sLO https://github.com/zverok/clio/archive/clio2.zip && unzip clio2.zip
 ```
 
 ### Запуск Clio
