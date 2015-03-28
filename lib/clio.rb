@@ -95,7 +95,7 @@ class Clio
     end
 
     def extract_feed?
-        !options[:indexonly]
+        !options[:indexonly] && !options[:imagesonly]
     end
 
     def extract_images?
