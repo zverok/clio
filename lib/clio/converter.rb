@@ -5,6 +5,13 @@ require 'slim'
 require_relative './haml_helpers'
 require_relative './slim_helpers'
 
+class Hashie::Mash
+    def dumb_update(other)
+        other.each{|k, v| regular_writer(k.to_s, v)}
+        self
+    end
+end
+
 class Converter < Component
     PAGE_SIZE = 30
 
@@ -36,14 +43,9 @@ class Converter < Component
     def dump_entries
         log.info "Превращаем в HTML записи"
 
-        #require 'ruby-prof'
-        #RubyProf.start
         @entries.each_with_progress do |name, entry|
-            render_page('entry', "entries/#{entry.name}.html", entry.merge(noindexes: true))
+            render_page('entry', "entries/#{entry.name}.html", entry.dumb_update(noindexes: true))
         end
-        #result = RubyProf.stop
-        #printer = RubyProf::GraphHtmlPrinter.new(result)
-        #printer.print(File.open('prof.html', 'w'))
     end
 
     def dump_indexes
@@ -57,12 +59,12 @@ class Converter < Component
             rows.each_with_progress do |row|
                 # метод entries у Hashie::Mash занят, поэтому приходится доступ по символу
                 # и переобозовать в posts
-                row.posts = entries.values_at(*row[:entries])
+                row.dumb_update(posts: entries.values_at(*row[:entries]))
 
                 render_page(
                     'list',
                     "lists/#{index.meta.descriptor}/#{context.make_filename(row.descriptor)}.html",
-                    row.merge(
+                    row.dumb_update(
                         index: index,
                         title: "#{index.meta.title}: #{row.title}",
                         mtime: row.posts.map(&:mtime).max
@@ -89,7 +91,7 @@ class Converter < Component
                 'index',
                 path,
                 entries: entries,
-                pager: {cur: i, pages: pages},
+                pager: Mash.new(cur: i, pages: pages),
                 mtime: entries.map(&:mtime).max
             )
         end
@@ -112,26 +114,6 @@ class Converter < Component
             res_mtime < @mtimes[__FILE__] # or generation algo had changed since last generation
     end
 
-    #def render_page(template_path, path, data)
-        #return if data[:mtime] &&
-            #!need_rerender?(data[:mtime], context.path(path), context.haml_template_path(template_path))
-
-        #noindexes = data.delete(:noindexes)
-        
-        #helpers = Helpers.new(context, path)
-        #data = Mash.new(data).merge(
-            #sidebar_indexes: noindexes ? [] : @sidebar_indexes,
-            #info: feedinfo
-        #)
-
-        #body = context.haml(template_path).render(helpers, data)
-        #html = context.haml('layout').render(helpers, data){|region|
-            #region ? helpers[region] : body
-        #}
-
-        #File.write(context.path!(path), html)
-    #end
-
     def render_page(template_path, path, data)
         return if data[:mtime] &&
             !need_rerender?(data[:mtime], context.path(path), context.slim_template_path(template_path))
@@ -139,7 +121,9 @@ class Converter < Component
         noindexes = data.delete(:noindexes)
         
         helpers = SlimHelpers.new(context, path)
-        data = Mash.new(data).merge(
+        data = Mash.new.dumb_update(data) unless data.is_a?(Mash)
+        
+        data.dumb_update(
             sidebar_indexes: noindexes ? [] : @sidebar_indexes,
             info: feedinfo
         )
@@ -168,7 +152,10 @@ class Converter < Component
             e.comments ||= []
             e.via = nil unless e.key?(:via)
             e.to = nil unless e.key?(:to)
-            e.title = e.body.gsub(/<.+?>/, '')
+            e.dumb_update(
+                title: e.body.gsub(/<.+?>/, ''),
+                info: feedinfo
+            )
             @entries[e.name] = e
         end
     end

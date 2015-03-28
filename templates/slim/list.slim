@@ -8,7 +8,7 @@
         = " › #{title}"
     #feed
       - posts.each do |entry|
-        == partial(:entry, entry.merge(info: info))
+        == partial(:entry, entry)
     div{style=("clear:both; height:12px")}
 .box-bottom
   .box-corner

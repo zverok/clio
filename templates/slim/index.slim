@@ -25,7 +25,7 @@
       .subscribebar
     #feed
       - entries.each do |entry|
-        == partial(:entry, entry.merge(info: info))
+        == partial(:entry, entry)
     .pager.bottom
       #pages
         - pager.pages.each_with_index do |page, i|

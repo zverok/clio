@@ -176,6 +176,7 @@ module Hashie
     # Recursively merges this mash with the passed
     # in hash, merging each hash in the hierarchy.
     def deep_update(other_hash, &blk)
+      #p "called from #{caller.first(3).join(' / ')}"
       other_hash.each_pair do |k, v|
         key = convert_key(k)
         if regular_reader(key).is_a?(Mash) && v.is_a?(::Hash)

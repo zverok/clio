@@ -17,7 +17,8 @@ class SlimHelpers
   end
 
   def partial(template, options = {})
-    context.slim("_#{template}").render(self, Mash.new(options))
+    #context.slim("_#{template}").render(self, Mash.new(options))
+    context.slim("_#{template}").render(self, options)
   end
 
   def to_filename(text)
