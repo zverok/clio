@@ -132,7 +132,11 @@ class FeedContext
     end
 
     def haml_template_path(subpath)
-        template_path('haml', subpath)
+        template_path('haml', subpath + '.haml')
+    end
+
+    def slim_template_path(subpath)
+        template_path('slim', subpath + '.slim')
     end
 
     def make_filename(text)
@@ -176,10 +180,18 @@ class FeedContext
     # file services ====================================================
     def haml(path)
         @templates ||= Hash.new{|h, path|
-            h[path] = Haml::Engine.new(File.read(haml_template_path(path + '.haml')))
+            h[path] = Haml::Engine.new(File.read(haml_template_path(path)))
         }
 
         @templates[path]
+    end
+
+    def slim(path)
+        @slim_templates ||= Hash.new{|h, path|
+            h[path] = Slim::Template.new(slim_template_path(path), pretty: true)
+        }
+
+        @slim_templates[path]
     end
 
     def load_mash(path)

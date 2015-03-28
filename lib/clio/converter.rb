@@ -1,7 +1,9 @@
 # encoding: utf-8
 require 'haml'
+require 'slim'
 
 require_relative './haml_helpers'
+require_relative './slim_helpers'
 
 class Converter < Component
     PAGE_SIZE = 30
@@ -34,9 +36,14 @@ class Converter < Component
     def dump_entries
         log.info "Превращаем в HTML записи"
 
+        #require 'ruby-prof'
+        #RubyProf.start
         @entries.each_with_progress do |name, entry|
-            render_page('entry', "entries/#{entry.name}.html", entry)
+            render_page('entry', "entries/#{entry.name}.html", entry.merge(noindexes: true))
         end
+        #result = RubyProf.stop
+        #printer = RubyProf::GraphHtmlPrinter.new(result)
+        #printer.print(File.open('prof.html', 'w'))
     end
 
     def dump_indexes
@@ -93,28 +100,58 @@ class Converter < Component
         render_page('info', 'info.html', {}) # feedinfo и так передаётся
     end
 
-    def newer?(path, tm)
-        path = context.path(path)
-        File.exists?(path) && File.mtime(path) > tm
+    def need_rerender?(tm, path, template)
+        return true unless File.exists?(path)
+
+        @mtimes ||= Hash.new{|h, path| h[path] = File.mtime(path)}
+
+        res_mtime = @mtimes[path]
+
+        res_mtime < tm || # generated earlie than data mtime
+            res_mtime < @mtimes[template] || # or template had changed since last generation
+            res_mtime < @mtimes[__FILE__] # or generation algo had changed since last generation
     end
 
-    def render_page(template_path, path, data)
-        return if data[:mtime] && newer?(path, data[:mtime])
+    #def render_page(template_path, path, data)
+        #return if data[:mtime] &&
+            #!need_rerender?(data[:mtime], context.path(path), context.haml_template_path(template_path))
+
+        #noindexes = data.delete(:noindexes)
         
-        helpers = Helpers.new(context, path)
+        #helpers = Helpers.new(context, path)
+        #data = Mash.new(data).merge(
+            #sidebar_indexes: noindexes ? [] : @sidebar_indexes,
+            #info: feedinfo
+        #)
+
+        #body = context.haml(template_path).render(helpers, data)
+        #html = context.haml('layout').render(helpers, data){|region|
+            #region ? helpers[region] : body
+        #}
+
+        #File.write(context.path!(path), html)
+    #end
+
+    def render_page(template_path, path, data)
+        return if data[:mtime] &&
+            !need_rerender?(data[:mtime], context.path(path), context.slim_template_path(template_path))
+
+        noindexes = data.delete(:noindexes)
+        
+        helpers = SlimHelpers.new(context, path)
         data = Mash.new(data).merge(
-            sidebar_indexes: @sidebar_indexes,
+            sidebar_indexes: noindexes ? [] : @sidebar_indexes,
             info: feedinfo
         )
 
-        body = context.haml(template_path).render(helpers, data)
-        html = context.haml('layout').render(helpers, data){|region|
+        body = context.slim(template_path).render(helpers, data)
+        html = context.slim('layout').render(helpers, data){|region|
             region ? helpers[region] : body
         }
 
         File.write(context.path!(path), html)
     end
-
+    
     def feedinfo
         @feedinfo ||= context.load_mash(context.json_path('feedinfo.js'))
     end

@@ -1,0 +1,39 @@
+- content_for(:title){ "#{info.name} #{pager.pages[pager.cur]}" }
+
+.box-body
+  .profile.withbar
+    .header
+      .profile
+        a.l_editpicture{href="http://friendfeed.com/#{info.id}"}
+          img.picture.large{alt=info.name src=userpic_path(info.id)} /
+      .body
+        - unless info.type == 'special'
+          .stats
+            - if info.subscribers
+              div
+                span.num= info.subscribers.count
+                |  подписчика/-ов
+            - if info.subscriptions
+              div
+                span.num= info.subscriptions.count
+                |  подписок
+        h1
+          a.name{href=relative("index.html")} = info.name
+        .description= info.description
+      .clear
+    .subbarcontainer
+      .subscribebar
+    #feed
+      - entries.each do |entry|
+        == partial(:entry, entry.merge(info: info))
+    .pager.bottom
+      #pages
+        - pager.pages.each_with_index do |page, i|
+          - if i.zero?
+            a{href=relative("index.html") class="#{(i == pager.cur) ? 'clio-current' : ''}"} = i+1
+          - else
+            a{href=relative("pages/index#{page}.html") class="#{(i == pager.cur) ? 'clio-current' : ''}"} = i+1
+  div{style="clear:both; height:12px"}
+.box-bottom
+  .box-corner
+  .box-spacer

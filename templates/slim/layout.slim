@@ -1,0 +1,18 @@
+doctype html
+html{xmlns="http://www.w3.org/1999/xhtml"}
+  head
+    meta{content="text/html; charset=utf-8" http-equiv="Content-Type"} /
+    title= "#{yield(:title)} — FriendFeed/Clio"
+    link{href=relative("css/nano-theme-helvetica.css") rel="stylesheet" type="text/css"} /
+    link{href=relative("css/clio.css") rel="stylesheet" type="text/css"} /
+    script{src=relative("js/jquery.js")}
+    script{src=relative("js/clio.js")}
+  body
+    #bodydiv
+      #container
+        == partial(:sidebar, indexes: sidebar_indexes, info: info)
+        #body
+          #page.box.white
+            == yield
+        #footer
+          | © 2015 FriendFeed (and <a href="http://github.com/zverok/clio">Clio</a> archiver)

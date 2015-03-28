@@ -1,0 +1,56 @@
+- content_for(:title){title}
+
+.box-top.default-bar
+  .box-corner
+  .box-spacer
+.box-body
+  #feed
+    .l_entry.entry.entryview.large.expandedcomments.author
+      .profile
+        a.l_profile{href="http://friendfeed.com/#{from.id}"}
+          img.picture.large{alt=from.name src=userpic_path(from.id)} /
+      .body
+        .ebody
+          .title
+            .name
+              - if info.id == from.id
+                a.l_profile{href=relative("index.html")} = info.name
+              - else
+                a.l_profile{href=relative("index.html")} = info.name
+                | : 
+                a.l_profile{href="http://friendfeed.com/#{from.id}"} = from.name
+                - if to && (to.count > 1 || to.first.id != info.id)
+                  | →
+                  - [*to].each do |tto|
+                    a.l_profile{href="http://friendfeed.com/#{tto.id}"} = tto.name
+            .text == body
+            - unless thumbnails.empty?
+              .images.media
+                - thumbnails.each do |thumbnail|
+                  table
+                    tr
+                      td
+                        .container
+                          a{href=image_path(thumbnail.link) rel="nofollow"}
+                            img.thumbnail{src=thumbnail_path(thumbnail.url) style="width:#{thumbnail.width}; height:#{thumbnail.height};"} /
+          - unless files.empty?
+            - files.each do |file|
+              == partial(:file, file)
+        .info
+          a.date{href=url} = dateFriendly
+          - if via
+            span.via
+              |  с 
+              a.service{href=via.url rel="nofollow"} = via.name
+        .likes
+          - likes.each do |like|
+            span.lbody
+              a.l_profile{href="http://friendfeed.com/#{like.from.id}" title="#{like.from.id} - #{like.dateFriendly}"} = like.from.name
+        .comments
+          - comments.each do |comment|
+            == partial(:comment, comment)
+      .clear
+  div{style="clear:both; height:12px"}
+.box-bottom
+  .box-corner
+  .box-spacer

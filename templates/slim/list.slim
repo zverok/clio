@@ -1,0 +1,15 @@
+- content_for(:title){title}
+
+.box-body
+  .subview
+    .header
+      h1
+        a.l_profile{href=relative('index.html')} = info.name
+        = " › #{title}"
+    #feed
+      - posts.each do |entry|
+        == partial(:entry, entry.merge(info: info))
+    div{style=("clear:both; height:12px")}
+.box-bottom
+  .box-corner
+  .box-spacer

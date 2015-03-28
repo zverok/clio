@@ -1,0 +1,53 @@
+.l_entry.entry{class= "#{(from.id != info.id) ? '' : 'nopicture'}"} 
+  - if from.id != info.id
+    .profile
+      a.l_profile{href="http://friendfeed.com/#{from.id}"}
+        img.picture{src=userpic_path(from.id) title=from.name style='width:50px;height:50px;'}
+  .body
+    .ebody
+      .title
+        - if to
+          .name
+            a.l_profile{href="http://friendfeed.com/#{from.id}"} = from.name
+            - if to.count > 1 || to.first.id != info.id
+              | →
+              - [*to].each do |tto|
+                a.l_profile{href="http://friendfeed.com/#{tto.id}"} = tto.name
+        .text == body
+        - unless thumbnails.empty?
+          .images.media
+            - thumbnails.each do |thumbnail|
+              table
+                tr
+                  td
+                    .container
+                      a{href=image_path(thumbnail.link) rel="nofollow"}
+                        img.thumbnail{src=thumbnail_path(thumbnail.url) style="width:#{thumbnail.width}; height:#{thumbnail.height};"} /
+      - unless files.empty?
+        - files.each do |file|
+          == partial(:file, file)
+    .info
+      a.date{href=relative("entries/#{name}.html")} = dateFriendly
+      - if via
+        span.via
+          |  с 
+          a.service{href=via.url rel="nofollow"} = via.name
+    .likes
+      - likes.each do |like|
+        span.lbody
+          a.l_profile{href="http://friendfeed.com/#{like.from.id}" title="#{like.from.id} - #{like.dateFriendly}"} = like.from.name
+    - if comments.count <= 3
+      .comments.all_comments
+        - comments.each do |comment|
+          == partial(:comment, comment)
+    - else
+      .comments.first_comments
+        == partial(:comment, comments.first)
+      .comments.middle_comments.expandcomment
+        a.hidden_comments_stub.l_expandcomments{href="#"} = "#{comments.count - 2} more comments"
+        .hidden_comments_contents
+          - comments[1..-2].each do |comment|
+            == partial(:comment, comment)
+      .comments.last_comments
+        == partial(:comment, comments.last)
+  .clear
