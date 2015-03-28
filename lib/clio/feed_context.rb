@@ -88,6 +88,7 @@ class FeedContext
         log.info "Загрузка всех записей #{feed_name}"
         Dir[json_path('entries/*.js')].
             reject{|fn| fn.sub(json_path('entries/'), '').include?('__')}.
+            reject{|fn| File.basename(fn) == '46c998ba.js'}. # known buggy entry :)
             each_with_progress do |f|
                 @entries << load_mash(f).merge(mtime: File.mtime(f))
             end
