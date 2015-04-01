@@ -152,8 +152,10 @@ class FeedContext
         end
 
         filename = filename.strip.
-            gsub(/^.*(\\|\/)/, '').
-            gsub(/[?!:|*%]/, '_').
+            gsub(/^.*(\\|\/)/, '')
+
+        filename = Russian.translit(filename).
+            gsub(/[^-a-zA-Z0-9._]/, '_').
             sub(/\.$/, '') # встретился файл «image.bmp.». чего только люди не выдумают!
 
         ensure_fname_length(filename)

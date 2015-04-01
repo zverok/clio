@@ -65,6 +65,10 @@ class PictureExtractor < Component
                         fname = response.headers[:content_disposition].to_s.force_encoding('UTF-8').scan(/filename="(.+)"/).flatten.first
                         !fname || fname.empty? and
                             fail("Что-то пошло не так при загрузке #{url}: #{response.headers}")
+
+                        if fname.end_with?('.jpg.png') # ну спасибо блин ДОРОГОЙ ФРЕНДФИД!!!!
+                            fname = fname.sub(/\.jpg\.png$/, '.jpg')
+                        end
                     else
                         ext = guess_ext(response)
                         fname = url.sub(/^.+\//, '') + ".#{ext}"
