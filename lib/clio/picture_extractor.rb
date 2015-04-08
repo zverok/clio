@@ -69,6 +69,10 @@ class PictureExtractor < Component
                         if fname.end_with?('.jpg.png') # ну спасибо блин ДОРОГОЙ ФРЕНДФИД!!!!
                             fname = fname.sub(/\.jpg\.png$/, '.jpg')
                         end
+
+                        unless fname.include?('.')
+                            fname += '.' + guess_ext(response)
+                        end
                     else
                         ext = guess_ext(response)
                         fname = url.sub(/^.+\//, '') + ".#{ext}"
