@@ -35,8 +35,13 @@ class FeedExtractor < Component
         page = extract_feed(start: start, num: PAGE_SIZE)
         
         if page['entries'].empty?
-            log.info "Всё загружено, ура!"
-            return false
+            if context.feed_name.end_with?('/likes') && start < 1000
+                log.warn "Пустая страница, но поскольку это лайки, попробуем следующую (привет, Пирсон!)"
+                return true
+            else
+                log.info "Всё загружено, ура!"
+                return false
+            end
         end
         
         entries = page['entries'].map{|e| process_entry(e)}
