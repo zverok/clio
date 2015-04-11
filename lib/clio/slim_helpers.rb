@@ -72,10 +72,12 @@ class SlimHelpers
       @file_map ||= File.read(context.json_path('files.tsv')).split("\n").
                     map{|ln| ln.split("\t")}.to_h
 
-      fname = @file_map[url] or
-        fail("Файл #{url} не скачан!")
-
-      relative(context.path_("files/#{fname}"))
+      if fname = @file_map[url]
+        relative(context.path_("files/#{fname}"))
+      else
+        context.clio.log.warn("Файл #{url} не скачан!")
+        url
+      end
     else
       url
     end
