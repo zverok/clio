@@ -2,7 +2,7 @@
 require_relative './index'
 
 class Indexator < Component
-    INDEXES = [DateIndex, HashtagIndex, AllIndex]
+    INDEXES = [DateIndex, HashtagIndex, MediaIndex, LikesIndex, CommentsIndex, AllIndex]
 
     def run
         log.info "Начато #{description}"

@@ -161,7 +161,7 @@ class Converter < Component
     end
 
     def load_sidebar_indexes!
-        @sidebar_indexes = %w[dates hashtags].map{|iid|
+        @sidebar_indexes = %w[dates hashtags media likes comments].map{|iid|
             context.load_mash(context.json_path("indexes/#{iid}.js"))
         }
     end

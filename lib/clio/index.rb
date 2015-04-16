@@ -107,14 +107,46 @@ class HashtagIndex < Index
     end
 end
 
-#class MP3Index < Index
-    #def descriptor; 'mp3' end
-    #def title; 'Музыка' end
+class MediaIndex < Index
+    def descriptor; 'media' end
+    def title; 'Медиа' end
 
-    #def key(entry)
-        #entry.files && 
-    #end
-#end
+    def key(entry)
+        [entry.files ? 'музыка' : nil, entry.thumbnails ? 'картинки' : nil].compact
+    end
+end
+
+class LikesIndex < Index
+    def descriptor; 'likes' end
+    def title; 'Лайки' end
+
+    RANGES = {
+        (20...50) => 'Больше  20',
+        (50...100) => 'Больше  50',
+        (100..1_000_000) => 'Больше 100',
+    }
+
+    def key(entry)
+        range, text = RANGES.detect{|r,t| r === entry.likes.count}
+        [text].compact
+    end
+end
+
+class CommentsIndex < Index
+    def descriptor; 'comments' end
+    def title; 'Комменты' end
+
+    RANGES = {
+        (20...50) => 'Больше  20',
+        (50...100) => 'Больше  50',
+        (100..1_000_000) => 'Больше 100',
+    }
+
+    def key(entry)
+        range, text = RANGES.detect{|r,t| r === entry.comments.count}
+        [text].compact
+    end
+end
 
 class MonthDaysIndex < Index
     def initialize(month_descriptor)
