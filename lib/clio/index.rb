@@ -127,7 +127,7 @@ class LikesIndex < Index
     }
 
     def key(entry)
-        range, text = RANGES.detect{|r,t| r === entry.likes.count}
+        range, text = RANGES.detect{|r,t| r === (entry.likes || []).count}
         [text].compact
     end
 end
@@ -143,7 +143,7 @@ class CommentsIndex < Index
     }
 
     def key(entry)
-        range, text = RANGES.detect{|r,t| r === entry.comments.count}
+        range, text = RANGES.detect{|r,t| r === (entry.comments || []).count}
         [text].compact
     end
 end
